@@ -1,4 +1,4 @@
-const initialSurveyModel = require('../models/initialSurveyModel');
+const initialSurveyModel = require('../models/clientInitialSurveyModel');
 
 const addInitialSurvey = async (req, res) => {
   try {

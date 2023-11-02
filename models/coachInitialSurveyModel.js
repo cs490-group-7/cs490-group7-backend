@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db_connection.js');
 
-const InitialSurvey = sequelize.define('InitialSurvey', {
+const CoachInitialSurvey = sequelize.define('CoachInitialSurvey', {
   dateOfBirth: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -27,6 +27,7 @@ const InitialSurvey = sequelize.define('InitialSurvey', {
   specializations: {
     type: DataTypes.STRING,
   },
+  // Add coach-specific attributes here
 });
 
-module.exports = InitialSurvey;
+module.exports = CoachInitialSurvey;
