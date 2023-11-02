@@ -2,8 +2,7 @@ const express = require('express');
 const db_conn = require('./db_connection');
 // adding code here
 const bodyParser = require('body-parser');
-const userRoutes = require('./userRoutes');
-const surveyRoutes = require('./routes')
+const userRoutes = require('./userRoutes')
 
 const port = 4000;
 const app = express();
@@ -15,5 +14,4 @@ app.get('/health/check', (req,res) =>{
 })
 //integrate user routes
 app.use('/api/users', userRoutes);
-app.use('/api/surveys', surveyRoutes);
 app.listen(port, () => console.log(`Server is successfully listening on port ${port}`));
