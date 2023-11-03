@@ -1,24 +1,24 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db_connection.js');
+const connection = require('../db_connection');
 
-const ClientInitialSurvey = sequelize.define('ClientInitialSurvey', {
-  dateOfBirth: {
-    type: DataTypes.DATE,
-    allowNull: false,
+const ClientInitialSurvey = {
+  addInitialSurvey: (surveyData, callback) => {
+    const query = 'INSERT INTO ClientInitialSurvey (dateOfBirth, gender, height, weight, fitnessGoal) VALUES (?, ?, ?, ?, ?)';
+    const values = [
+      surveyData.dateOfBirth,
+      surveyData.gender,
+      surveyData.height,
+      surveyData.weight,
+      surveyData.fitnessGoal,
+    ];
+
+    connection.query(query, values, (err, results) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, results);
+      }
+    });
   },
-  gender: {
-    type: DataTypes.STRING,
-  },
-  height: {
-    type: DataTypes.FLOAT,
-  },
-  weight: {
-    type: DataTypes.FLOAT,
-  },
-  fitnessGoal: {
-    type: DataTypes.STRING,
-  },
-  // Add client-specific attributes here
-});
+};
 
 module.exports = ClientInitialSurvey;

@@ -1,4 +1,4 @@
-USE databaseName; -- not sure what the name of the database is
+USE databasename; -- not sure what the name of the database is
 CREATE TABLE Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,

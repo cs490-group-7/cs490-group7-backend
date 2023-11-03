@@ -1,10 +1,10 @@
 const express = require('express');
 const db_conn = require('./db_connection');
-// adding code here
+
 const bodyParser = require('body-parser');
 const userRoutes = require('./userRoutes');
-const clientSurveyRoutes = require('./clientroutes');
-const coachSurveyRoutes = require('./coachRoutes');
+const clientSurveyRoutes = require('./routes/clientRoutes');
+const coachSurveyRoutes = require('./routes/coachRoutes');
 
 const port = 4000;
 const app = express();
