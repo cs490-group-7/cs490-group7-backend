@@ -2,7 +2,7 @@ const express = require('express');
 const db_conn = require('./db_connection');
 
 const bodyParser = require('body-parser');
-const userRoutes = require('./userRoutes');
+const userRoutes = require('./routes/userRoutes');
 const clientSurveyRoutes = require('./routes/clientRoutes');
 const coachSurveyRoutes = require('./routes/coachRoutes');
 
