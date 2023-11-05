@@ -1,7 +1,14 @@
 const connection = require('../db_connection');
+const { validationResult } = require('express-validator');
 
 const ClientInitialSurvey = {
   addInitialSurvey: (surveyData, callback) => {
+    const errors = validationResult(surveyData);
+
+    if (!errors.isEmpty()) {
+      return callback(errors.array(), null);
+    }
+
     const query = 'INSERT INTO ClientInitialSurvey (dateOfBirth, gender, height, weight, fitnessGoal) VALUES (?, ?, ?, ?, ?)';
     const values = [
       surveyData.dateOfBirth,
@@ -13,6 +20,7 @@ const ClientInitialSurvey = {
 
     connection.query(query, values, (err, results) => {
       if (err) {
+        console.error('Database error:', err);
         callback(err, null);
       } else {
         callback(null, results);
