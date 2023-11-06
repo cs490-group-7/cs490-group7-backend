@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
 // Login Endpoint
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+   console.log("reached");
     try {
         // Check if user exists
         const user = await db_conn.query('SELECT * FROM Users WHERE email = ?', [email]);
