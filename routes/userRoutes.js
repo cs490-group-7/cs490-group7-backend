@@ -7,7 +7,7 @@ const router = express.Router();
 // Registration Endpoint
 router.post('/register', async (req, res) => {
   const { firstName, lastName, email, password, isCoach } = req.body;
-  
+
   try {
     // Check if user already exists
     const userExists = await db_conn.query('SELECT email FROM Users WHERE email = ?', [email]);
@@ -26,6 +26,20 @@ router.post('/register', async (req, res) => {
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error('Registration error:', error);
+
+    if (error instanceof SyntaxError) {
+      return res.status(400).json({ message: "Invalid request format" });
+    }
+
+    if (error instanceof ReferenceError) {
+      return res.status(500).json({ message: "Database query error" });
+    }
+
+    if (error instanceof TypeError) {
+      return res.status(500).json({ message: "Type error" });
+    }
+
+    // Handle unexpected errors
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -33,6 +47,7 @@ router.post('/register', async (req, res) => {
 // Login Endpoint
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
+    
     try {
         // Check if user exists
         const user = await db_conn.query('SELECT * FROM Users WHERE email = ?', [email]);

@@ -2,7 +2,7 @@ const connection = require('../db_connection');
 const { validationResult } = require('express-validator');
 
 const ClientInitialSurvey = {
-  addInitialSurvey: (surveyData, callback) => {
+  create: (surveyData, callback) => { // Change function name to 'create'
     const errors = validationResult(surveyData);
 
     if (!errors.isEmpty()) {
