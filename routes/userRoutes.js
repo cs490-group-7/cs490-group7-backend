@@ -7,7 +7,7 @@ const router = express.Router();
 // Registration Endpoint
 router.post('/register', async (req, res) => {
   const { firstName, lastName, email, password, isCoach } = req.body;
-
+  
   try {
     // Check if user already exists
     const userExists = await db_conn.query('SELECT email FROM Users WHERE email = ?', [email]);
@@ -32,26 +32,32 @@ router.post('/register', async (req, res) => {
 
 // Login Endpoint
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
+    try {
+        // Check if user exists
+        const user = await db_conn.query('SELECT * FROM Users WHERE email = ?', [email]);
 
-  try {
-    // Check if user exists
-    const user = await db_conn.query('SELECT * FROM Users WHERE email = ?', [email]);
-    if (user.length === 0) {
-      return res.status(400).json({ message: "Invalid email or password" });
+        if (user.length === 0) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        // Check if the user object is defined before accessing properties
+        if (user[0] && user[0].password) {
+            // Compare passwords
+            const validPassword = await bcrypt.compare(password, user[0].password);
+            if (!validPassword) {
+                return res.status(400).json({ message: "Invalid email or password" });
+            }
+        } else {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        res.status(200).json({ message: "Logged in successfully" });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: "Server error" });
     }
-
-    // Compare passwords
-    const validPassword = await bcrypt.compare(password, user[0].password);
-    if (!validPassword) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    res.status(200).json({ message: "Logged in successfully" });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: "Server error" });
-  }
 });
+
 
 module.exports = router;
