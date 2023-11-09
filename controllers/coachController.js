@@ -1,24 +1,14 @@
 const initialSurveyModel = require('../models/coachInitialSurveyModel');
 
-const addInitialSurvey = async (req, res) => {
+const addCoachSurvey = async (req, res) => {
   try {
     const {
-      dateOfBirth,
-      gender,
-      height,
-      weight,
-      fitnessGoal,
       certifications,
       experience,
       specializations,
     } = req.body;
 
     const survey = await initialSurveyModel.create({
-      dateOfBirth,
-      gender,
-      height,
-      weight,
-      fitnessGoal,
       certifications,
       experience,
       specializations,
@@ -32,5 +22,5 @@ const addInitialSurvey = async (req, res) => {
 };
 
 module.exports = {
-  addInitialSurvey,
+  addCoachSurvey,
 };
