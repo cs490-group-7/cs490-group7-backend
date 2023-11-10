@@ -1,17 +1,17 @@
-USE databasename; -- not sure what the name of the database is
+USE testdb2; -- not sure what the name of the database is
 
-CREATE TABLE User (
-    user_id int NOT NULL AUTO_INCREMENT,
+CREATE TABLE Users (
+    id int NOT NULL AUTO_INCREMENT,
     first_name varchar(50) NOT NULL,
     last_name varchar(50) NOT NULL,
     email varchar(50) UNIQUE NOT NULL,
     password varchar(50) NOT NULL, -- need to figure out how to properly store password
-    is_coach boolean,
+    user_type ENUM('Client', 'Coach') NOT NULL, -- consider using: is_coach boolean,
     phone varchar(20),
 
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (id)
 ); 
 
 -- Table for client initial survey
@@ -22,24 +22,24 @@ CREATE TABLE ClientInitialSurvey (
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
     height DECIMAL(5, 2) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
-    -- fitness_goal VARCHAR(100) NOT NULL,  User can have many goals, use User_Goal and Goal tables
+    fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
 
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users (user_id)
+    FOREIGN KEY (user_id) REFERENCES Users (id)
 );
 
 -- Table for coach initial survey
 CREATE TABLE CoachInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
-    coach_id INT NOT NULL,
+    user_id INT NOT NULL,
     certifications TEXT,
     experience TEXT,
     specializations TEXT,
 
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (coach_id) REFERENCES Users (user_id)
+    FOREIGN KEY (user_id) REFERENCES Users (id)
 );
 
 CREATE TABLE ExerciseBank(
@@ -92,7 +92,7 @@ CREATE TABLE WorkoutCalendar(
 
     PRIMARY KEY (workout_id, user_id),
     FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE Chat(
@@ -103,8 +103,8 @@ CREATE TABLE Chat(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (chat_id),
-    FOREIGN KEY (coach_id) REFERENCES User (user_id), -- maybe ON DELETE CASCADE
-    FOREIGN KEY (client_id) REFERENCES User (user_id) -- maybe ON DELETE CASCADE
+    FOREIGN KEY (coach_id) REFERENCES Users (id), -- maybe ON DELETE CASCADE
+    FOREIGN KEY (client_id) REFERENCES Users (id) -- maybe ON DELETE CASCADE
 
 );
 
@@ -127,78 +127,23 @@ CREATE TABLE Coach_Client(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (coach_id, client_id),
-    FOREIGN KEY (coach_id) REFERENCES User (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (client_id) REFERENCES User (user_id) ON DELETE CASCADE
+    FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE Specialization(
-    specialization_id int NOT NULL AUTO_INCREMENT,
-    spezialization text,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (specialization_id)
-);
-
-CREATE TABLE Coach_Specialization(
-    coach_id int NOT NULL,
-    specialization_id int NOT NULL,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (coach_id, specialization_id),
-    FOREIGN KEY (coach_id) REFERENCES User (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (specialization_id) REFERENCES Specialization (specialization_id) ON DELETE CASCADE
-);
-
-CREATE TABLE Certification(
-    certification_id int NOT NULL AUTO_INCREMENT,
-    certification text,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (certification_id)
-);
-
-CREATE TABLE Coach_Certification(
-    coach_id int NOT NULL,
-    certification_id int NOT NULL,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (coach_id, certification_id),
-    FOREIGN KEY (coach_id) REFERENCES User (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (certification_id) REFERENCES Certification (certification_id) ON DELETE CASCADE
-);
-
-CREATE TABLE Experience(
-    experience_id int NOT NULL AUTO_INCREMENT,
-    experience text,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (experience_id)
-);
-
-CREATE TABLE Coach_Experience(
-    coach_id int NOT NULL,
-    experience_id int NOT NULL,
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (coach_id, experience_id),
-    FOREIGN KEY (coach_id) REFERENCES User (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (experience_id) REFERENCES Experience (experience_id) ON DELETE CASCADE
-);
 
 CREATE TABLE Goal(
     goal_id int NOT NULL AUTO_INCREMENT,
     goal text,
+    goal_helper text, -- To specify what the numeric value means (reps, weight, Personal Record weight lifted, etc)
+    base_line int, -- numeric value like base line, progress, end goal 
+    progress int,
+    end_goal int,
 
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (goal_id)
-);
+); 
 
 CREATE TABLE User_Goal(
     user_id int NOT NULL,
@@ -208,7 +153,7 @@ CREATE TABLE User_Goal(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, goal_id),
-    FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
     FOREIGN KEY (goal_id) REFERENCES Goal (goal_id) ON DELETE CASCADE
 );
 
@@ -221,7 +166,7 @@ CREATE TABLE ProgressPicture(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (picture_id),
-    FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE WorkoutConsistency(
@@ -233,7 +178,7 @@ CREATE TABLE WorkoutConsistency(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, date),
-    FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE DailySurvey(
@@ -247,5 +192,5 @@ CREATE TABLE DailySurvey(
     last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, date),
-    FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
