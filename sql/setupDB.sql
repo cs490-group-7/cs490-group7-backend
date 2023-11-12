@@ -1,4 +1,4 @@
-USE testdb2; -- not sure what the name of the database is
+USE fitness_app; -- not sure what the name of the database is
 
 CREATE TABLE Users (
     id int NOT NULL AUTO_INCREMENT,
