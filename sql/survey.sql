@@ -1,4 +1,4 @@
-USE cs490p;
+USE database;
 
 -- Table for client initial survey
 CREATE TABLE ClientInitialSurvey (

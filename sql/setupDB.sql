@@ -1,4 +1,4 @@
-USE cs490p; -- not sure what the name of the database is
+USE database; -- not sure what the name of the database is
 
 CREATE TABLE Users (
     id int NOT NULL AUTO_INCREMENT,
