@@ -4,10 +4,13 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const clientSurveyRoutes = require('./routes/clientRoutes');
 const coachSurveyRoutes = require('./routes/coachRoutes');
-
+// cors added here
+const cors = require('cors');
 const port = 4000;
 const app = express();
 
+//cors added here
+app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/health/check', (req, res) => {
