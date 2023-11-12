@@ -20,7 +20,7 @@ CREATE TABLE ClientInitialSurvey (
     user_id INT NOT NULL,
     date_of_birth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    height DECIMAL(5, 2) NOT NULL,
+    height VARCHAR(5) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
 

@@ -3,19 +3,19 @@ const initialSurveyModel = require('../models/clientinitialSurveyModel');
 const addInitialSurvey = async (req, res) => {
   try {
     const {
-      dateOfBirth,
+      date_of_birth,
       gender,
       height,
       weight,
-      fitnessGoal,
+      fitness_goal,
     } = req.body;
 
     const survey = await initialSurveyModel.create({
-      dateOfBirth,
+      date_of_birth,
       gender,
       height,
       weight,
-      fitnessGoal,
+      fitness_goal,
     });
 
     res.status(201).json({ message: 'Client initial survey added successfully', survey });
