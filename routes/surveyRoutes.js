@@ -44,4 +44,25 @@ router.post('/coach-survey', (req, res) => {
     });
 });
 
+router.post('/daily-survey', (req, res) => {
+    const surveyData = req.body;
+
+    const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
+    const values = [
+      surveyData.user_id,
+      surveyData.calorie_intake,
+      surveyData.water_intake,
+      surveyData.weight,
+      surveyData.mood,
+    ];
+
+    connection.query(query, values, (error, result) => {
+        if(error){
+            console.error(error)
+            return res.status(400).json({ message: "Server error" });
+        }
+        res.status(200).json({ message: 'Daily survey added successfully' });
+    });
+});
+
 module.exports = router;
