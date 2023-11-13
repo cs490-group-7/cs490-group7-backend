@@ -21,9 +21,18 @@ router.post('/register', async (req, res) => {
 
     // Insert user into the database
     const userType = isCoach ? 'Coach' : 'Client';
-    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType]);
+    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, last_update) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP())', [firstName, lastName, email, hashedPassword, userType]);
 
-    res.status(201).json({ message: "User registered successfully" });
+    const userQuery = 'SELECT id FROM Users WHERE email = ?';
+
+    const results = await new Promise((resolve, reject) => {
+        db_conn.query(userQuery, [email], (error, results, fields) => {
+            if (error) reject(error);
+            else resolve(results);
+        });
+    });
+
+    res.status(201).json({ message: "User registered successfully", ident: results[0].id });
   } catch (error) {
     console.error('Registration error:', error);
 
@@ -69,7 +78,7 @@ router.post('/login', async (req, res) => {
           return res.status(400).json({ message: "Invalid email or password" });
       }
 
-      res.status(200).json({ message: "Logged in successfully" });
+      res.status(200).json({ message: "Logged in successfully", ident: results[0].id });
   } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: "Server error" });

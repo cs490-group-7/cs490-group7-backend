@@ -5,7 +5,7 @@ CREATE TABLE Users (
     first_name varchar(50) NOT NULL,
     last_name varchar(50) NOT NULL,
     email varchar(50) UNIQUE NOT NULL,
-    password varchar(50) NOT NULL, -- need to figure out how to properly store password
+    password varchar(128) NOT NULL, -- need to figure out how to properly store password
     user_type ENUM('Client', 'Coach') NOT NULL, -- consider using: is_coach boolean,
     phone varchar(20),
 
@@ -20,7 +20,7 @@ CREATE TABLE ClientInitialSurvey (
     user_id INT NOT NULL,
     date_of_birth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    height DECIMAL(5, 2) NOT NULL,
+    height VARCHAR(5) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
 
