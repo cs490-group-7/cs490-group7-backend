@@ -3,6 +3,7 @@ const db_conn = require('./db_connection');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
+const dataRoutes = require('./routes/dataRoutes');
 // cors added here
 const cors = require('cors');
 const port = 4000;
@@ -18,6 +19,7 @@ app.get('/health/check', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/surveys', surveyRoutes);
+app.use('/api/data', dataRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
