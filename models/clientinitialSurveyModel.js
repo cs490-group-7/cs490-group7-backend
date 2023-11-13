@@ -9,8 +9,9 @@ const ClientInitialSurvey = {
       return callback(errors.array(), null);
     }
 
-    const query = 'INSERT INTO ClientInitialSurvey (dateOfBirth, gender, height, weight, fitnessGoal) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO ClientInitialSurvey (user_id,dateOfBirth, gender, height, weight, fitnessGoal) VALUES (?, ?, ?, ?, ?)';
     const values = [
+      surveyData.user_id,
       surveyData.dateOfBirth,
       surveyData.gender,
       surveyData.height,

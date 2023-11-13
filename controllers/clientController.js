@@ -3,6 +3,7 @@ const initialSurveyModel = require('../models/clientinitialSurveyModel');
 const addInitialSurvey = async (req, res) => {
   try {
     const {
+      user_id,
       dateOfBirth,
       gender,
       height,
@@ -11,6 +12,7 @@ const addInitialSurvey = async (req, res) => {
     } = req.body;
 
     const survey = await initialSurveyModel.create({
+      user_id,
       dateOfBirth,
       gender,
       height,

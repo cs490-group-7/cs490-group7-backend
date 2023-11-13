@@ -23,7 +23,16 @@ router.post('/register', async (req, res) => {
     const userType = isCoach ? 'Coach' : 'Client';
     await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType]);
 
-    res.status(201).json({ message: "User registered successfully" });
+    const userQuery = 'SELECT id FROM Users WHERE email = ?';
+
+    const results = await new Promise((resolve, reject) => {
+        db_conn.query(userQuery, [email], (error, results, fields) => {
+            if (error) reject(error);
+            else resolve(results);
+        });
+    });
+
+    res.status(201).json({ message: "User registered successfully", ident: results[0].id });
   } catch (error) {
     console.error('Registration error:', error);
 
