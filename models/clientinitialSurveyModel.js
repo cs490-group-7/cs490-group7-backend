@@ -12,11 +12,11 @@ const ClientInitialSurvey = {
     const query = 'INSERT INTO ClientInitialSurvey (user_id, dateOfBirth, gender, height, weight, fitnessGoal) VALUES (?, ?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
-      surveyData.dateOfBirth,
+      surveyData.date_of_birth,
       surveyData.gender,
       surveyData.height,
       surveyData.weight,
-      surveyData.fitnessGoal,
+      surveyData.fitness_goal,
     ];
 
     connection.query(query, values, (err, results) => {

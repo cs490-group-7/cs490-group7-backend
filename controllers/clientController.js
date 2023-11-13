@@ -4,20 +4,20 @@ const addInitialSurvey = async (req, res) => {
   try {
     const {
       user_id,
-      dateOfBirth,
+      date_of_birth,
       gender,
       height,
       weight,
-      fitnessGoal,
+      fitness_goal,
     } = req.body;
 
     const survey = await initialSurveyModel.create({
       user_id,
-      dateOfBirth,
+      date_of_birth,
       gender,
       height,
       weight,
-      fitnessGoal,
+      fitness_goal,
     });
 
     res.status(201).json({ message: 'Client initial survey added successfully', survey });
