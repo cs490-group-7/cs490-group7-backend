@@ -9,8 +9,9 @@ const CoachInitialSurvey = {
       return callback(errors.array(), null);
     }
 
-    const query = 'INSERT INTO CoachInitialSurvey (certifications, experience, specializations) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO CoachInitialSurvey (user_id, certifications, experience, specializations) VALUES (?, ?, ?)';
     const values = [
+      surveyData.user_id,
       surveyData.certifications,
       surveyData.experience,
       surveyData.specializations,

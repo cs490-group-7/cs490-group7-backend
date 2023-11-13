@@ -3,12 +3,14 @@ const initialSurveyModel = require('../models/coachInitialSurveyModel');
 const addCoachSurvey = async (req, res) => {
   try {
     const {
+      user_id,
       certifications,
       experience,
       specializations,
     } = req.body;
 
     const survey = await initialSurveyModel.create({
+      user_id,
       certifications,
       experience,
       specializations,

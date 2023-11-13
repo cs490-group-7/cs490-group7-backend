@@ -5,7 +5,7 @@ CREATE TABLE Users (
     first_name varchar(50) NOT NULL,
     last_name varchar(50) NOT NULL,
     email varchar(50) UNIQUE NOT NULL,
-    password varchar(50) NOT NULL, -- need to figure out how to properly store password
+    password varchar(128) NOT NULL, -- need to figure out how to properly store password
     user_type ENUM('Client', 'Coach') NOT NULL, -- consider using: is_coach boolean,
     phone varchar(20),
 

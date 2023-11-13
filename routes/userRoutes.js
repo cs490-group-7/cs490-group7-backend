@@ -78,7 +78,7 @@ router.post('/login', async (req, res) => {
           return res.status(400).json({ message: "Invalid email or password" });
       }
 
-      res.status(200).json({ message: "Logged in successfully" });
+      res.status(200).json({ message: "Logged in successfully", ident: results[0].id });
   } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: "Server error" });
