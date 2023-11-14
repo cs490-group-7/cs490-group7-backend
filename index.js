@@ -1,5 +1,6 @@
 const express = require('express');
 const db_conn = require('./db_connection');
+console.log(db_conn)
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
