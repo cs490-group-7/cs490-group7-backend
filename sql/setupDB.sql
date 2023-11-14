@@ -20,7 +20,7 @@ CREATE TABLE ClientInitialSurvey (
     user_id INT NOT NULL,
     date_of_birth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    height VARCHAR(5) NOT NULL,
+    height VARCHAR(6) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
 
@@ -181,16 +181,14 @@ CREATE TABLE WorkoutConsistency(
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE DailySurvey(
-    user_id int NOT NULL,
-    date date DEFAULT (CURRENT_DATE),
-    calorie_intake int,
-    water_intake int,
-    weight int,
-    mood varchar(50),
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
+CREATE TABLE DailySurvey (
+    user_id INT NOT NULL,
+    date DATE DEFAULT (CURRENT_DATE),
+    calorie_intake INT,
+    water_intake INT,
+    weight INT,
+    mood VARCHAR(50),
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, date),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );

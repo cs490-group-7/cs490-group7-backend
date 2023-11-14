@@ -50,8 +50,8 @@ router.post('/daily-survey', (req, res) => {
     const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
-      surveyData.calorie_intake,
-      surveyData.water_intake,
+      surveyData.calories,
+      surveyData.waterIntake,
       surveyData.weight,
       surveyData.mood,
     ];
