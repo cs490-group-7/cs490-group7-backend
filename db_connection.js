@@ -15,6 +15,7 @@ const dbConfig = {
   port: process.env.PORT,
 };
 const connection = mysql.createConnection(dbConfig);
+console.log(connection)
 
 connection.connect((err) => {
   if (err) {
