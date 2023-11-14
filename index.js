@@ -1,12 +1,12 @@
 const express = require('express');
-const db_conn = require('./db_connection');
+const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 // cors added here
 const cors = require('cors');
-const port = process.env.PORT || 4000;
+const port = process.env.NODE_ENV === 'prod' ? process.env.PORT : 4000;
 const app = express();
 
 //cors added here
