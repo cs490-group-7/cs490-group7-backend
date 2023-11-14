@@ -6,7 +6,7 @@ const surveyRoutes = require('./routes/surveyRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 // cors added here
 const cors = require('cors');
-const port = process.env.NODE_ENV === 'prod' ? process.env.PORT : 4000;
+const port = process.env.PORT;
 const app = express();
 
 //cors added here
