@@ -9,4 +9,4 @@ In the project directory, you can run:
 
 ### `npm run dev`
 
-Starts and runs the server in development mode
+Starts and runs the server locally in development mode
