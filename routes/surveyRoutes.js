@@ -43,7 +43,6 @@ router.post('/coach-survey', (req, res) => {
         res.status(200).json({ message: 'Coach survey added successfully' });
     });
 });
-
 router.post('/daily-survey', (req, res) => {
     const surveyData = req.body;
 
@@ -58,11 +57,16 @@ router.post('/daily-survey', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if(error){
-            console.error(error)
-            return res.status(400).json({ message: "Server error" });
+            if (error.code === 'ER_DUP_ENTRY') {
+                return res.status(400).json({ message: "You've already submitted a survey for today" });
+            } else {
+                console.error(error);
+                return res.status(400).json({ message: "Server error" });
+            }
         }
         res.status(200).json({ message: 'Daily survey added successfully' });
     });
 });
+
 
 module.exports = router;
