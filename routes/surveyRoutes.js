@@ -58,6 +58,7 @@ router.post('/daily-survey', (req, res) => {
     connection.query(query, values, (error, result) => {
         if(error){
             if (error.code === 'ER_DUP_ENTRY') {
+                console.log("Duplicate Survey Detected");
                 return res.status(400).json({ message: "You've already submitted a survey for today" });
             } else {
                 console.error(error);
