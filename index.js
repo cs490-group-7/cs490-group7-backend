@@ -1,5 +1,5 @@
 const express = require('express');
-const dotenv = require('dotenv');
+const db_conn = require('./db_connection');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
