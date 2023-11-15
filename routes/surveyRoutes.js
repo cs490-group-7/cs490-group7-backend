@@ -5,7 +5,7 @@ const connection = require('../db_connection');
 router.post('/initial-survey', (req, res) => {
     const surveyData = req.body;
 
-    const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, fitness_goal, last_update) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())';
+    const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, fitness_goal) VALUES (?, ?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
       surveyData.date_of_birth,
@@ -27,7 +27,7 @@ router.post('/initial-survey', (req, res) => {
 router.post('/coach-survey', (req, res) => {
     const surveyData = req.body;
 
-    const query = 'INSERT INTO CoachInitialSurvey (user_id, certifications, experience, specializations, last_update) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP())';
+    const query = 'INSERT INTO CoachInitialSurvey (user_id, certifications, experience, specializations) VALUES (?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
       surveyData.certifications,
@@ -46,7 +46,7 @@ router.post('/coach-survey', (req, res) => {
 router.post('/daily-survey', (req, res) => {
     const surveyData = req.body;
 
-    const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood, last_update) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP())';
+    const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
       surveyData.calories,
