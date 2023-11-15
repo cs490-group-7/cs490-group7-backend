@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
 
     // Insert user into the database
     const userType = isCoach ? 'Coach' : 'Client';
-    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, last_update) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP())', [firstName, lastName, email, hashedPassword, userType]);
+    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType]);
 
     const userQuery = 'SELECT id FROM Users WHERE email = ?';
 

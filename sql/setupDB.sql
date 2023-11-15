@@ -9,7 +9,7 @@ CREATE TABLE Users (
     user_type ENUM('Client', 'Coach') NOT NULL, -- consider using: is_coach boolean,
     phone varchar(20),
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id)
 ); 
@@ -20,11 +20,11 @@ CREATE TABLE ClientInitialSurvey (
     user_id INT NOT NULL,
     date_of_birth DATE NOT NULL,
     gender ENUM('Male', 'Female', 'Other') NOT NULL,
-    height VARCHAR(5) NOT NULL,
+    height VARCHAR(6) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );
@@ -37,7 +37,7 @@ CREATE TABLE CoachInitialSurvey (
     experience TEXT,
     specializations TEXT,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES Users (id)
 );
@@ -48,7 +48,7 @@ CREATE TABLE ExerciseBank(
     url varchar(100),
     muscle_group varchar(50),
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (exercise_id)
 );
@@ -59,7 +59,7 @@ CREATE TABLE Workout(
     set_count int,
     description text,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (workout_id)
 );
@@ -69,7 +69,7 @@ CREATE TABLE Workout_Exercise(
     exercise_id int NOT NULL,
     reps int,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (workout_id, exercise_id),
     FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
@@ -88,7 +88,7 @@ CREATE TABLE WorkoutCalendar(
     friday boolean DEFAULT FALSE,
     saturday boolean DEFAULT FALSE,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (workout_id, user_id),
     FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
@@ -100,7 +100,7 @@ CREATE TABLE Chat(
     coach_id int NOT NULL,
     client_id int NOT NULL,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (chat_id),
     FOREIGN KEY (coach_id) REFERENCES Users (id), -- maybe ON DELETE CASCADE
@@ -114,7 +114,7 @@ CREATE TABLE Message(
     from_coach boolean NOT NULL,
     message text,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (message_id),
     FOREIGN KEY (chat_id) REFERENCES Chat (chat_id) ON DELETE CASCADE
@@ -124,7 +124,7 @@ CREATE TABLE Coach_Client(
     coach_id int NOT NULL,
     client_id int NOT NULL,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (coach_id, client_id),
     FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE,
@@ -140,7 +140,7 @@ CREATE TABLE Goal(
     progress int,
     end_goal int,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (goal_id)
 ); 
@@ -150,7 +150,7 @@ CREATE TABLE User_Goal(
     goal_id int NOT NULL,
     completed boolean DEFAULT FALSE,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, goal_id),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
@@ -163,7 +163,7 @@ CREATE TABLE ProgressPicture(
     date date DEFAULT (CURRENT_DATE),
     image LONGBLOB,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (picture_id),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
@@ -175,22 +175,20 @@ CREATE TABLE WorkoutConsistency(
     workouts_planned int,
     workouts_completed int,
 
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, date),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE DailySurvey(
-    user_id int NOT NULL,
-    date date DEFAULT (CURRENT_DATE),
-    calorie_intake int,
-    water_intake int,
-    weight int,
-    mood varchar(50),
-
-    last_update TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-
+CREATE TABLE DailySurvey (
+    user_id INT NOT NULL,
+    date DATE DEFAULT (CURRENT_DATE),
+    calorie_intake INT,
+    water_intake INT,
+    weight INT,
+    mood VARCHAR(50),
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, date),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
