@@ -1,12 +1,15 @@
 # cs490-individual-backend
 
-Setup your local mysql database conneciton:
+## Setup your local Express JS server: 
 
-### 1. Rename file 'db_connection_template.js' to 'db_connection.js' (this file is git ignored for security and adaptability)
-### 2. In 'db_connection.js', change the user and password to your local mysql credentials
+#### 1. Copy and paste file `.env.local-template`
+#### 2. Rename new pasted file to `.env.local` (this file is git ignored for security and adaptability)
+#### 3. Adjust values in `.env.local` for your local MySQL credentials to get a succesful connection
 
-In the project directory, you can run:
+## In the project directory, you can run:
+
+### `npm install`
+Installs all required packages
 
 ### `npm run dev`
-
-Starts and runs the server locally in development mode
+Starts and runs the server locally in development mode and connects with your local MySQL database
