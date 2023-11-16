@@ -25,7 +25,7 @@ router.get('/workout-list', async (req, res) => {
         const workoutQuery = 'SELECT workout_id, workout_name, description FROM fitness_app.Workout ORDER BY workout_name ASC';
   
         const results = await new Promise((resolve, reject) => {
-            db_conn.query(exerciseQuery, (error, results, fields) => {
+            db_conn.query(workoutQuery, (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
@@ -35,7 +35,47 @@ router.get('/workout-list', async (req, res) => {
         console.error('Exercise retrieval error:', error);
         res.status(500).json({ message: "Server error" });
     }
-  });
+});
+
+router.post('/workout-details', async (req, res) => {
+    console.log(req.body);
+    const { workoutId } = req.body;
+    console.log(workoutId);
+
+    try {
+        const workoutQuery = 'SELECT workout_name, set_count, description FROM fitness_app.Workout WHERE workout_id=?';
+  
+        console.log("hello 1");
+        const workoutResults = await new Promise((resolve, reject) => {
+            db_conn.query(workoutQuery, [workoutId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        console.log("hello 2");
+        console.log(workoutResults);
+
+        const exerciseQuery = 'SELECT E.exercise_name, WE.reps FROM fitness_app.Workout_Exercise as WE, fitness_app.ExerciseBank as E WHERE WE.exercise_id=E.exercise_id AND workout_id=?';
+
+        console.log("hello 3");
+        const exerciseResults = await new Promise((resolve, reject) => {
+            db_conn.query(exerciseQuery, [workoutId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        console.log("hello 4");
+        console.log(exerciseResults);
+
+        res.json({
+            workout: workoutResults[0],
+            exercises: exerciseResults
+        });
+    } catch (error) {
+        console.error('Exercise retrieval error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 router.post('/create-workout', async (req, res) => {
     const { workoutName, setCount, description, exercises} = req.body;
