@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/exercise-bank', async (req, res) => {
   try {
-      const exerciseQuery = 'SELECT exercise_id, exercise_name FROM fitness_app.ExerciseBank ORDER BY exercise_name ASC';
+      const exerciseQuery = 'SELECT exercise_id, exercise_name FROM ExerciseBank ORDER BY exercise_name ASC';
 
       const results = await new Promise((resolve, reject) => {
           db_conn.query(exerciseQuery, (error, results, fields) => {
@@ -22,7 +22,7 @@ router.get('/exercise-bank', async (req, res) => {
 
 router.get('/workout-list', async (req, res) => {
     try {
-        const workoutQuery = 'SELECT workout_id, workout_name, description FROM fitness_app.Workout ORDER BY workout_name ASC';
+        const workoutQuery = 'SELECT workout_id, workout_name, description FROM Workout ORDER BY workout_name ASC';
   
         const results = await new Promise((resolve, reject) => {
             db_conn.query(workoutQuery, (error, results, fields) => {
@@ -41,7 +41,7 @@ router.post('/workout-details', async (req, res) => {
     const { workoutId } = req.body;
 
     try {
-        const workoutQuery = 'SELECT workout_name, set_count, description FROM fitness_app.Workout WHERE workout_id=?';
+        const workoutQuery = 'SELECT workout_name, set_count, description FROM Workout WHERE workout_id=?';
   
         const workoutResults = await new Promise((resolve, reject) => {
             db_conn.query(workoutQuery, [workoutId], (error, results, fields) => {
@@ -50,7 +50,7 @@ router.post('/workout-details', async (req, res) => {
             });
         });
 
-        const exerciseQuery = 'SELECT E.exercise_name, WE.reps FROM fitness_app.Workout_Exercise as WE, fitness_app.ExerciseBank as E WHERE WE.exercise_id=E.exercise_id AND workout_id=?';
+        const exerciseQuery = 'SELECT E.exercise_name, WE.reps FROM Workout_Exercise as WE, ExerciseBank as E WHERE WE.exercise_id=E.exercise_id AND workout_id=?';
 
         const exerciseResults = await new Promise((resolve, reject) => {
             db_conn.query(exerciseQuery, [workoutId], (error, results, fields) => {
@@ -80,7 +80,7 @@ router.post('/create-workout', async (req, res) => {
             });
         });
         const results = await new Promise((resolve, reject) => {
-            db_conn.query('SELECT * FROM fitness_app.Workout ORDER BY workout_id DESC LIMIT 1', (error, results, fields) => {
+            db_conn.query('SELECT * FROM Workout ORDER BY workout_id DESC LIMIT 1', (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
