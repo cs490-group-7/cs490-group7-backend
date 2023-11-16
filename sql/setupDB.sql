@@ -26,7 +26,7 @@ CREATE TABLE ClientInitialSurvey (
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users (id)
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 -- Table for coach initial survey
@@ -39,7 +39,7 @@ CREATE TABLE CoachInitialSurvey (
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users (id)
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE ExerciseBank(
@@ -103,9 +103,8 @@ CREATE TABLE Chat(
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (chat_id),
-    FOREIGN KEY (coach_id) REFERENCES Users (id), -- maybe ON DELETE CASCADE
-    FOREIGN KEY (client_id) REFERENCES Users (id) -- maybe ON DELETE CASCADE
-
+    FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE Message(
