@@ -32,7 +32,6 @@ CREATE TABLE ClientInitialSurvey (
 );
 
 -- Table for coach initial survey
--- Table for coach initial survey
 CREATE TABLE CoachInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
