@@ -32,12 +32,15 @@ CREATE TABLE ClientInitialSurvey (
 );
 
 -- Table for coach initial survey
+-- Table for coach initial survey
 CREATE TABLE CoachInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    certifications TEXT,
     experience TEXT,
     specializations TEXT,
+    city VARCHAR(100),
+    state VARCHAR(50),
+    availability TEXT,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
