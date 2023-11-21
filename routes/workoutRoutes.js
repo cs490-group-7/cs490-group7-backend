@@ -20,12 +20,14 @@ router.get('/exercise-bank', async (req, res) => {
   }
 });
 
-router.get('/workout-list', async (req, res) => {
+router.post('/workout-list', async (req, res) => {
+    const { userId } = req.body;
+
     try {
-        const workoutQuery = 'SELECT workout_id, workout_name, description FROM Workout ORDER BY workout_name ASC';
+        const workoutQuery = 'SELECT workout_id, workout_name, description FROM Workout WHERE creator_id=? ORDER BY workout_name ASC';
   
         const results = await new Promise((resolve, reject) => {
-            db_conn.query(workoutQuery, (error, results, fields) => {
+            db_conn.query(workoutQuery, [userId], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
@@ -70,11 +72,11 @@ router.post('/workout-details', async (req, res) => {
 });
 
 router.post('/create-workout', async (req, res) => {
-    const { workoutName, setCount, description, exercises} = req.body;
+    const { creatorId, workoutName, setCount, description, exercises } = req.body;
   
     try {
         await new Promise((resolve, reject) => {
-            db_conn.query('INSERT INTO Workout (workout_name, set_count, description) VALUES (?, ?, ?)', [workoutName, setCount, description], (error, results, fields) => {
+            db_conn.query('INSERT INTO Workout (workout_name, creator_id, set_count, description) VALUES (?, ?, ?, ?)', [workoutName, creatorId, setCount, description], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
