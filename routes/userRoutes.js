@@ -90,7 +90,7 @@ router.post('/initial-search', async (req, res) => {
   
   try {
     // Retrieve names of coaches
-    const userQuery = 'SELECT first_name, last_name FROM Users WHERE user_type = \'Coach\'';
+    const userQuery = 'SELECT first_name, last_name, id FROM Users WHERE user_type = \'Coach\'';
 
     const results = await new Promise((resolve, reject) => {
       db_conn.query(userQuery, (error, results, fields) => {
@@ -108,13 +108,13 @@ router.post('/initial-search', async (req, res) => {
 
 // Initial Coach Search Endpoint
 router.post('/coach-details', async (req, res) => {
-  const { fname, lname } = req.body;
+  const { fname, lname, userId } = req.body;
   try {
-    // Retrieve names of coaches
-    const userQuery = 'SELECT CoachInitialSurvey.* FROM CoachInitialSurvey JOIN Users ON CoachInitialSurvey.user_id = Users.id WHERE Users.first_name = ? AND Users.last_name = ?';
+    // Retrieve details from CoachInitialSurvey based on first name, last name, and user_id
+    const userQuery = 'SELECT CoachInitialSurvey.* FROM CoachInitialSurvey JOIN Users ON CoachInitialSurvey.user_id = Users.id WHERE Users.first_name = ? AND Users.last_name = ? AND Users.id = ?';
 
     const results = await new Promise((resolve, reject) => {
-      db_conn.query(userQuery, [fname, lname], (error, results, fields) => {
+      db_conn.query(userQuery, [fname, lname, userId], (error, results, fields) => {
         if (error) reject(error);
         else resolve(results);
       });
@@ -127,8 +127,4 @@ router.post('/coach-details', async (req, res) => {
   }
 });
 
-
 module.exports = router;
-
-
-
