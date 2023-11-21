@@ -85,6 +85,50 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Initial Coach Search Endpoint
+router.post('/initial-search', async (req, res) => {
+  
+  try {
+    // Retrieve names of coaches
+    const userQuery = 'SELECT first_name, last_name FROM Users WHERE user_type = \'Coach\'';
+
+    const results = await new Promise((resolve, reject) => {
+      db_conn.query(userQuery, (error, results, fields) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+    
+    res.status(200).json({ message: "Coach search successful", coaches: results });
+  } catch (error) {
+    console.error('Coach search error:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Initial Coach Search Endpoint
+router.post('/coach-details', async (req, res) => {
+  const { fname, lname } = req.body;
+  try {
+    // Retrieve names of coaches
+    const userQuery = 'SELECT CoachInitialSurvey.* FROM CoachInitialSurvey JOIN Users ON CoachInitialSurvey.user_id = Users.id WHERE Users.first_name = ? AND Users.last_name = ?';
+
+    const results = await new Promise((resolve, reject) => {
+      db_conn.query(userQuery, [fname, lname], (error, results, fields) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+
+    res.status(200).json({ message: "Coach Detail Search successful", coaches: results });
+  } catch (error) {
+    console.error('Coach Detail search error:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;
+
 
 
