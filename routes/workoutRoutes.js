@@ -39,6 +39,25 @@ router.post('/workout-list', async (req, res) => {
     }
 });
 
+router.post('/delete-workout', async (req, res) => {
+    const { workoutId } = req.body;
+
+    try {
+        const workoutQuery = 'DELETE FROM Workout WHERE workout_id=?';
+  
+        const results = await new Promise((resolve, reject) => {
+            db_conn.query(workoutQuery, [workoutId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.json(results);
+    } catch (error) {
+        console.error('Exercise removal error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 router.post('/workout-details', async (req, res) => {
     const { workoutId } = req.body;
 
