@@ -27,14 +27,14 @@ router.post('/initial-survey', (req, res) => {
 router.post('/coach-survey', (req, res) => {
     const surveyData = req.body;
 
-    const query = 'INSERT INTO CoachInitialSurvey (user_id, experience, specializations, city, state, availability) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO CoachInitialSurvey (user_id, experience, specializations, city, state, price) VALUES (?, ?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
       surveyData.experience,
       surveyData.specializations,
       surveyData.city,
       surveyData.state,
-      surveyData.availability,
+      surveyData.price,
     ];
 
     connection.query(query, values, (error, result) => {

@@ -35,11 +35,11 @@ CREATE TABLE ClientInitialSurvey (
 CREATE TABLE CoachInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    experience TEXT,
+    experience INT,
     specializations TEXT,
     city VARCHAR(100),
     state VARCHAR(50),
-    availability TEXT,
+    price FLOAT,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
