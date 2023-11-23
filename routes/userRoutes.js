@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Registration Endpoint
 router.post('/register', async (req, res) => {
-  const { firstName, lastName, email, password, isCoach } = req.body;
+  const { firstName, lastName, email, password, phone, isCoach } = req.body;
 
   try {
     // Check if user already exists
@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
 
     // Insert user into the database
     const userType = isCoach ? 'Coach' : 'Client';
-    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType]);
+    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType, phone]);
 
     const userQuery = 'SELECT id FROM Users WHERE email = ?';
 
