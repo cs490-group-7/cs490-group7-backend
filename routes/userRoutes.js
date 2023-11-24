@@ -10,11 +10,17 @@ router.post('/register', async (req, res) => {
 
   try {
     // Check if user already exists
-    const userExists = await db_conn.query('SELECT email FROM Users WHERE email = ?', [email]);
-    if (userExists.length > 0) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    const checkUserQuery = 'SELECT email FROM Users WHERE email = ?';
+    const userExists = await new Promise((resolve, reject) => {
+      db_conn.query(checkUserQuery, [email], (error, results) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
 
+    if (userExists.length > 0) {
+      return res.status(400).json({ message: "User already exists with email: " + email });
+    }
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -35,6 +41,11 @@ router.post('/register', async (req, res) => {
     res.status(201).json({ message: "User registered successfully", ident: results[0].id });
   } catch (error) {
     console.error('Registration error:', error);
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      //console.error('Duplicate email detected:', error.sqlMessage);
+      return res.status(400).json({ message: "Email already exists" + email});
+    }
 
     if (error instanceof SyntaxError) {
       return res.status(400).json({ message: "Invalid request format" });
