@@ -6,22 +6,28 @@ const router = express.Router();
 
 // Registration Endpoint
 router.post('/register', async (req, res) => {
-  const { firstName, lastName, email, password, isCoach } = req.body;
+  const { firstName, lastName, email, password, phone, isCoach } = req.body;
 
   try {
     // Check if user already exists
-    const userExists = await db_conn.query('SELECT email FROM Users WHERE email = ?', [email]);
-    if (userExists.length > 0) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    const checkUserQuery = 'SELECT email FROM Users WHERE email = ?';
+    const userExists = await new Promise((resolve, reject) => {
+      db_conn.query(checkUserQuery, [email], (error, results) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
 
+    if (userExists.length > 0) {
+      return res.status(400).json({ message: "User already exists with email: " + email });
+    }
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Insert user into the database
     const userType = isCoach ? 'Coach' : 'Client';
-    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType]);
+    await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType, phone]);
 
     const userQuery = 'SELECT id FROM Users WHERE email = ?';
 
@@ -35,6 +41,11 @@ router.post('/register', async (req, res) => {
     res.status(201).json({ message: "User registered successfully", ident: results[0].id });
   } catch (error) {
     console.error('Registration error:', error);
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      //console.error('Duplicate email detected:', error.sqlMessage);
+      return res.status(400).json({ message: "Email already exists" + email});
+    }
 
     if (error instanceof SyntaxError) {
       return res.status(400).json({ message: "Invalid request format" });
@@ -90,7 +101,7 @@ router.post('/initial-search', async (req, res) => {
   
   try {
     // Retrieve names of coaches
-    const userQuery = 'SELECT first_name, last_name FROM Users WHERE user_type = \'Coach\'';
+    const userQuery = 'SELECT first_name, last_name, id FROM Users WHERE user_type = \'Coach\'';
 
     const results = await new Promise((resolve, reject) => {
       db_conn.query(userQuery, (error, results, fields) => {
@@ -108,13 +119,13 @@ router.post('/initial-search', async (req, res) => {
 
 // Initial Coach Search Endpoint
 router.post('/coach-details', async (req, res) => {
-  const { fname, lname } = req.body;
+  const { fname, lname, userId } = req.body;
   try {
-    // Retrieve names of coaches
-    const userQuery = 'SELECT CoachInitialSurvey.* FROM CoachInitialSurvey JOIN Users ON CoachInitialSurvey.user_id = Users.id WHERE Users.first_name = ? AND Users.last_name = ?';
+    // Retrieve details from CoachInitialSurvey based on first name, last name, and user_id
+    const userQuery = 'SELECT CoachInitialSurvey.* FROM CoachInitialSurvey JOIN Users ON CoachInitialSurvey.user_id = Users.id WHERE Users.first_name = ? AND Users.last_name = ? AND Users.id = ?';
 
     const results = await new Promise((resolve, reject) => {
-      db_conn.query(userQuery, [fname, lname], (error, results, fields) => {
+      db_conn.query(userQuery, [fname, lname, userId], (error, results, fields) => {
         if (error) reject(error);
         else resolve(results);
       });
@@ -127,8 +138,4 @@ router.post('/coach-details', async (req, res) => {
   }
 });
 
-
 module.exports = router;
-
-
-

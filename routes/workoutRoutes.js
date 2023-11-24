@@ -20,12 +20,14 @@ router.get('/exercise-bank', async (req, res) => {
   }
 });
 
-router.get('/workout-list', async (req, res) => {
+router.post('/workout-list', async (req, res) => {
+    const { userId } = req.body;
+
     try {
-        const workoutQuery = 'SELECT workout_id, workout_name, description FROM Workout ORDER BY workout_name ASC';
+        const workoutQuery = 'SELECT workout_id, workout_name, description FROM Workout WHERE creator_id=? ORDER BY workout_name ASC';
   
         const results = await new Promise((resolve, reject) => {
-            db_conn.query(workoutQuery, (error, results, fields) => {
+            db_conn.query(workoutQuery, [userId], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
@@ -33,6 +35,25 @@ router.get('/workout-list', async (req, res) => {
         res.json(results);
     } catch (error) {
         console.error('Exercise retrieval error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.post('/delete-workout', async (req, res) => {
+    const { workoutId } = req.body;
+
+    try {
+        const workoutQuery = 'DELETE FROM Workout WHERE workout_id=?';
+  
+        const results = await new Promise((resolve, reject) => {
+            db_conn.query(workoutQuery, [workoutId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.json(results);
+    } catch (error) {
+        console.error('Exercise removal error:', error);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -70,11 +91,11 @@ router.post('/workout-details', async (req, res) => {
 });
 
 router.post('/create-workout', async (req, res) => {
-    const { workoutName, setCount, description, exercises} = req.body;
+    const { creatorId, workoutName, setCount, description, exercises } = req.body;
   
     try {
         await new Promise((resolve, reject) => {
-            db_conn.query('INSERT INTO Workout (workout_name, set_count, description) VALUES (?, ?, ?)', [workoutName, setCount, description], (error, results, fields) => {
+            db_conn.query('INSERT INTO Workout (workout_name, creator_id, set_count, description) VALUES (?, ?, ?, ?)', [workoutName, creatorId, setCount, description], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });

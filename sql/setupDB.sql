@@ -21,7 +21,7 @@ CREATE TABLE ClientInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     date_of_birth DATE NOT NULL,
-    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    gender ENUM('male', 'female', 'other', 'non-binary', 'no-answer') NOT NULL,
     height VARCHAR(6) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
@@ -35,11 +35,11 @@ CREATE TABLE ClientInitialSurvey (
 CREATE TABLE CoachInitialSurvey (
     survey_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    experience TEXT,
+    experience INT,
     specializations TEXT,
     city VARCHAR(100),
     state VARCHAR(50),
-    availability TEXT,
+    price FLOAT,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -278,6 +278,7 @@ INSERT INTO ExerciseBank (exercise_name, exercise_type) VALUES
 
 CREATE TABLE Workout(
     workout_id int NOT NULL AUTO_INCREMENT,
+    creator_id int NOT NULL,
     workout_name varchar(100) NOT NULL,
     set_count int,
     description text,
