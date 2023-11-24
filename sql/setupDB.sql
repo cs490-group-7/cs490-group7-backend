@@ -25,6 +25,8 @@ CREATE TABLE ClientInitialSurvey (
     height VARCHAR(6) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
     fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
+    weightGoal ENUM('Gain', 'Lose', 'Maintain'),
+    weightGoalValue DECIMAL(5, 2),
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
