@@ -5,7 +5,11 @@ const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
+<<<<<<< HEAD
+const progressRoutes = require('./routes/progressRoutes');
+=======
 const accountSettings = require('./routes/accountSettings')
+>>>>>>> dev
 // cors added here
 const cors = require('cors');
 const port = process.env.PORT || 4000;
@@ -23,6 +27,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/surveys', surveyRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/workout', workoutRoutes);
+app.use('/api/progress', progressRoutes)
 app.use('/api/account', accountSettings)
 // Error handling middleware
 app.use((err, req, res, next) => {
