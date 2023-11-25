@@ -4,15 +4,13 @@ const connection = require('../db_connection');
 
 router.post('/initial-survey', (req, res) => {
     const surveyData = req.body;
-
-    const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, fitness_goal, weightGoal, weightGoalValue) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, weightGoal, weightGoalValue) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const values = [
       surveyData.user_id,
       surveyData.date_of_birth,
       surveyData.gender,
       surveyData.height,
       surveyData.weight,
-      surveyData.fitness_goal,
       surveyData.weightGoal,
       surveyData.weightGoalValue
     ];

@@ -24,7 +24,6 @@ CREATE TABLE ClientInitialSurvey (
     gender ENUM('male', 'female', 'other', 'non-binary', 'no-answer') NOT NULL,
     height VARCHAR(6) NOT NULL,
     weight DECIMAL(5, 2) NOT NULL,
-    fitness_goal VARCHAR(100) NOT NULL,  -- User can have many goals, use User_Goal and Goal tables
     weightGoal ENUM('Gain', 'Lose', 'Maintain'),
     weightGoalValue DECIMAL(5, 2),
 
