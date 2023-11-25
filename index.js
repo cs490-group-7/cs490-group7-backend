@@ -5,11 +5,8 @@ const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
-<<<<<<< HEAD
 const progressRoutes = require('./routes/progressRoutes');
-=======
 const accountSettings = require('./routes/accountSettings')
->>>>>>> dev
 // cors added here
 const cors = require('cors');
 const port = process.env.PORT || 4000;
