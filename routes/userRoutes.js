@@ -138,4 +138,51 @@ router.post('/coach-details', async (req, res) => {
   }
 });
 
+router.post('/filtered-search', async (req, res) => {
+  const { experience, specializations, city, state, price } = req.body;
+
+  try {
+    // Build dynamic SQL query based on filters
+    let userQuery = 'SELECT first_name, last_name, id FROM Users WHERE user_type = \'Coach\'';
+    const queryParams = [];
+
+    if (experience) {
+      userQuery += ' AND experience = ?';
+      queryParams.push(experience);
+    }
+
+    if (specializations) {
+      userQuery += ' AND specializations = ?';
+      queryParams.push(specializations);
+    }
+
+    if (city) {
+      userQuery += ' AND city = ?';
+      queryParams.push(city);
+    }
+
+    if (state) {
+      userQuery += ' AND state = ?';
+      queryParams.push(state);
+    }
+
+    if (price) {
+      userQuery += ' AND price = ?';
+      queryParams.push(price);
+    }
+
+    const results = await new Promise((resolve, reject) => {
+      db_conn.query(userQuery, queryParams, (error, results, fields) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+
+    res.status(200).json({ message: "Filtered coach search successful", coaches: results });
+  } catch (error) {
+    console.error('Filtered coach search error:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
