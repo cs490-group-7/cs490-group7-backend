@@ -97,27 +97,6 @@ router.post('/login', async (req, res) => {
 });
 
 // Initial Coach Search Endpoint
-router.post('/initial-search', async (req, res) => {
-  
-  try {
-    // Retrieve names of coaches
-    const userQuery = 'SELECT first_name, last_name, id FROM Users WHERE user_type = \'Coach\'';
-
-    const results = await new Promise((resolve, reject) => {
-      db_conn.query(userQuery, (error, results, fields) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
-    
-    res.status(200).json({ message: "Coach search successful", coaches: results });
-  } catch (error) {
-    console.error('Coach search error:', error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// Initial Coach Search Endpoint
 router.post('/coach-details', async (req, res) => {
   const { fname, lname, userId } = req.body;
   try {
@@ -139,40 +118,47 @@ router.post('/coach-details', async (req, res) => {
 });
 
 router.post('/filtered-search', async (req, res) => {
-  const { experience, specializations, city, state, price } = req.body;
-
+  const { experience, specializations, city, state, maxPrice } = req.body;
+  
   try {
-    // Build dynamic SQL query based on filters
-    let userQuery = 'SELECT first_name, last_name, id FROM Users WHERE user_type = \'Coach\'';
-    const queryParams = [];
+    // Build the dynamic SQL query based on filters
+    let userQuery = 'SELECT Users.first_name, Users.last_name, Users.id FROM Users JOIN CoachInitialSurvey ON Users.id = CoachInitialSurvey.user_id WHERE Users.user_type = \'Coach\'';
+
+    // Add filters based on user input
+    const filterConditions = [];
+    const filterValues = [];
 
     if (experience) {
-      userQuery += ' AND experience = ?';
-      queryParams.push(experience);
+      filterConditions.push('CoachInitialSurvey.experience >= ?');
+      filterValues.push(experience);
     }
 
     if (specializations) {
-      userQuery += ' AND specializations = ?';
-      queryParams.push(specializations);
+      filterConditions.push('CoachInitialSurvey.specializations = ?');
+      filterValues.push(specializations);
     }
 
     if (city) {
-      userQuery += ' AND city = ?';
-      queryParams.push(city);
+      filterConditions.push('CoachInitialSurvey.city = ?');
+      filterValues.push(city);
     }
 
     if (state) {
-      userQuery += ' AND state = ?';
-      queryParams.push(state);
+      filterConditions.push('CoachInitialSurvey.state = ?');
+      filterValues.push(state);
     }
 
-    if (price) {
-      userQuery += ' AND price = ?';
-      queryParams.push(price);
+    if (maxPrice) {
+      filterConditions.push('CoachInitialSurvey.price <= ?');
+      filterValues.push(maxPrice);
+    }
+
+    if (filterConditions.length > 0) {
+      userQuery += ` AND ${filterConditions.join(' AND ')}`;
     }
 
     const results = await new Promise((resolve, reject) => {
-      db_conn.query(userQuery, queryParams, (error, results, fields) => {
+      db_conn.query(userQuery, filterValues, (error, results, fields) => {
         if (error) reject(error);
         else resolve(results);
       });
@@ -180,7 +166,7 @@ router.post('/filtered-search', async (req, res) => {
 
     res.status(200).json({ message: "Filtered coach search successful", coaches: results });
   } catch (error) {
-    console.error('Filtered coach search error:', error);
+    console.error('Filtered Coach search error:', error);
     res.status(500).json({ message: "Server error" });
   }
 });
