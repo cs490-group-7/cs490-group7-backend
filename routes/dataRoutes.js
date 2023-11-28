@@ -19,7 +19,7 @@ const mockData = {
     "workoutCompletion": false
 }
 
-router.get('/home-mock-data', (req, res) => {
+router.get('/dashboard-mock-data', (req, res) => {
     try {
       res.json(mockData);
     } catch (error) {
