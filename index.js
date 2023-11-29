@@ -17,7 +17,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/health/check', (req, res) => {
-    res.json({ testString: "Hello World From Server!" });
+    res.status(200).json({ message: "Hello World From Server!" });
 });
 
 app.use('/api/users', userRoutes);
@@ -33,3 +33,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => console.log(`Server is successfully listening on port ${port}`));
+
+module.exports = app;

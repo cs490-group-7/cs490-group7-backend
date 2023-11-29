@@ -1,0 +1,34 @@
+{
+    "name": "Fitness App Backend",
+    "description": "Fitness App Backend for CS490 Group 7",
+    "repository": "https://github.com/cs490-group-7/cs490-group7-backend",
+    "scripts": {
+      "postdeploy": "npm run test"
+    },
+    "env": {
+      "NODE_ENV": {
+        "description": "Node environment",
+        "value": "production"
+      }
+    },
+    "formation": {
+      "web": {
+        "quantity": 1
+      }
+    },
+    "addons": [
+    ],
+    "buildpacks": [
+      {
+        "url": "heroku/nodejs"
+      }
+    ],
+    "environments": {
+      "test": {
+        "scripts": {
+          "postdeploy": "npm run test"
+        }
+      }
+    }
+  }
+  
