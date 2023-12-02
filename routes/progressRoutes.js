@@ -30,7 +30,7 @@ router.post('/goal-info', async (req, res) => {
                 else resolve(results);
             });
         });
-        res.json(results);
+        res.json(results[0]);
     } catch (error) {
         console.error('Data retrieval error:', error);
         res.status(500).json({ message: "Error retrieving progress data" });
