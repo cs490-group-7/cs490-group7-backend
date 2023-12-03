@@ -37,4 +37,38 @@ router.post('/goal-info', async (req, res) => {
     }
 });
 
+router.post('/current-weight', async (req, res) => {
+    const userId = req.body.userId;
+    try {
+        const query = 'SELECT (CASE WHEN EXISTS(SELECT weight FROM fitness_app.dailysurvey WHERE user_id= ?) THEN (SELECT weight FROM fitness_app.dailysurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) ELSE (SELECT weight FROM fitness_app.clientinitialsurvey WHERE user_id= ?) END) AS weight';
+        const results = await new Promise((resolve, reject) => {
+            db_conn.query(query, [userId, userId, userId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.json(results[0]);
+    } catch (error) {
+        console.error('Data retrieval error:', error);
+        res.status(500).json({ message: "Error retrieving progress data" });
+    }
+});
+
+router.post('/update-goal-info', (req, res) => {
+    const inputData = req.body;
+    const values = [
+        inputData.weightGoal,
+        inputData.weightGoalValue,
+        inputData.userId
+    ]
+    const query = 'UPDATE ClientInitialSurvey SET weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;'
+    db_conn.query(query, values, (error, result) => {
+        if(error){
+            console.error(error)
+            return res.status(500).json({ message: 'Error updating goal' });
+        }
+        res.status(200).json({ message: 'Goal updated successfully' });
+    });
+})
+
 module.exports = router;
