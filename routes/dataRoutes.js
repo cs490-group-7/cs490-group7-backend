@@ -1,4 +1,5 @@
 const express = require('express');
+const db_conn = require('../db_connection');
 const router = express.Router();
 const mockDataFile = require('./mock-data.json');
 
@@ -26,6 +27,29 @@ router.get('/dashboard-mock-data', (req, res) => {
       console.error('Error sending mock data:', error);
       res.status(500).json({ error: 'Failed to retrieve mock data' });
     }
+});
+
+router.post('/dashboard-data', async (req, res) => {
+  const userId = req.body.userId;
+  try {
+      const query = 'SELECT weight AS goalBaseline, weightGoal, weightGoalValue, ('+
+                    'CASE WHEN EXISTS(SELECT weight FROM fitness_app.dailysurvey WHERE user_id=?) '+
+                    'THEN (SELECT weight FROM fitness_app.dailysurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) '+
+                    'ELSE (SELECT weight FROM fitness_app.clientinitialsurvey WHERE user_id=?) END) AS currentWeight, ('+
+                    'SELECT workout_name FROM WorkoutCalendar, Workout WHERE user_id=? AND WorkoutCalendar.workout_id = Workout.workout_id '+
+                    'AND WEEKDAY(CURDATE()) = 6) AS workout_name '+
+                    'FROM ClientInitialSurvey';
+      const results = await new Promise((resolve, reject) => {
+          db_conn.query(query, [userId,userId,userId,userId], (error, results, fields) => {
+              if (error) reject(error);
+              else resolve(results);
+          });
+      });
+      res.json(results[0]);
+  } catch (error) {
+      console.error('Data retrieval error:', error);
+      res.status(500).json({ message: "Error retrieving dashboard data" });
+  }
 });
 
 module.exports = router;
