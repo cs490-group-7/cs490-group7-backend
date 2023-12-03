@@ -43,6 +43,15 @@ router.post('/delete-workout', async (req, res) => {
     const { workoutId } = req.body;
 
     try {
+        const assignmentQuery = 'DELETE FROM WorkoutCalendar WHERE workout_id=?';
+  
+        await new Promise((resolve, reject) => {
+            db_conn.query(assignmentQuery, [workoutId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+
         const workoutQuery1 = 'DELETE FROM Workout_Exercise WHERE workout_id=?';
   
         await new Promise((resolve, reject) => {
@@ -219,6 +228,44 @@ router.post('/assign-workout', async (req, res) => {
       console.error('Assign workout error:', error);
   
       res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.post('/get-assignments', async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        const assignmentQuery = 'SELECT W.workout_id, W.workout_name, WC.day_of_week FROM WorkoutCalendar AS WC, Workout AS W WHERE WC.workout_id=W.workout_id AND WC.user_id=? ORDER BY W.workout_name ASC';
+  
+        const results = await new Promise((resolve, reject) => {
+            db_conn.query(assignmentQuery, [userId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.json(results);
+    } catch (error) {
+        console.error('Assignment retrieval error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.post('/unassign-workout', async (req, res) => {
+    const { workoutId, userId, dayOfWeek } = req.body;
+
+    try {
+        const assignmentQuery = 'DELETE FROM WorkoutCalendar WHERE workout_id=? AND user_id=? AND day_of_week=?';
+  
+        const results = await new Promise((resolve, reject) => {
+            db_conn.query(assignmentQuery, [workoutId, userId, dayOfWeek], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.json(results);
+    } catch (error) {
+        console.error('Assignment removal error:', error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
