@@ -36,8 +36,8 @@ router.post('/dashboard-data', async (req, res) => {
                     'CASE WHEN EXISTS(SELECT weight FROM fitness_app.dailysurvey WHERE user_id=?) '+
                     'THEN (SELECT weight FROM fitness_app.dailysurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) '+
                     'ELSE (SELECT weight FROM fitness_app.clientinitialsurvey WHERE user_id=?) END) AS currentWeight, ('+
-                    'SELECT workout_name FROM WorkoutCalendar, Workout WHERE user_id=? AND WorkoutCalendar.workout_id = Workout.workout_id '+
-                    'AND WEEKDAY(CURDATE()) = 6) AS workout_name '+
+                    'SELECT workout_name FROM fitness_app.workoutcalendar, fitness_app.workout WHERE user_id=? AND fitness_app.workoutcalendar.workout_id = fitness_app.workout.workout_id '+
+                    'AND WEEKDAY(CURDATE()) = 6) AS workout_name '+ //Change 6 -> day_of_week
                     'FROM ClientInitialSurvey';
       const results = await new Promise((resolve, reject) => {
           db_conn.query(query, [userId,userId,userId,userId], (error, results, fields) => {
