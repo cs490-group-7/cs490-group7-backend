@@ -165,4 +165,61 @@ router.post('/edit-workout', async (req, res) => {
     }
   });
 
+router.post('/assign-workout', async (req, res) => {
+    const { userId, workoutId, dayOfWeek } = req.body;
+  
+    try {
+        // Check if user exists
+        const checkUserQuery = 'SELECT id FROM Users WHERE id=?';
+        const userExists = await new Promise((resolve, reject) => {
+            db_conn.query(checkUserQuery, [userId], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        if (userExists.length === 0) {
+            return res.status(400).json({ message: "User does not exist: " + userId.toString() });
+        }
+
+        // Check if workout exists
+        const checkWorkoutQuery = 'SELECT workout_id FROM Workout WHERE workout_id=? AND creator_id=?';
+        const workoutExists = await new Promise((resolve, reject) => {
+            db_conn.query(checkWorkoutQuery, [workoutId, userId], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        if (workoutExists.length === 0) {
+            return res.status(400).json({ message: "Workout does not exist or is not owned by this user: workout: " + workoutId.toString() + ", user: " + userId.toString() });
+        }
+
+        // Check if assignment already exists
+        const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND user_id=? AND day_of_week=?';
+        const assignmentExists = await new Promise((resolve, reject) => {
+            db_conn.query(checkAssignmentQuery, [workoutId, userId, dayOfWeek], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        if (assignmentExists.length > 0) {
+            return res.status(400).json({ message: "Assignment already exists. " });
+        }
+
+        // Create the assignment
+        await db_conn.query('INSERT INTO WorkoutCalendar (workout_id, user_id, day_of_week) VALUES (?, ?, ?)', [workoutId, userId, dayOfWeek]);
+        await new Promise((resolve, reject) => {
+            db_conn.query(checkAssignmentQuery, [workoutId, userId, dayOfWeek], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        res.status(201).json({ message: "Assignment created successfully" });
+
+    } catch (error) {
+      console.error('Assign workout error:', error);
+  
+      res.status(500).json({ message: "Server error" });
+    }
+});
+
 module.exports = router;
