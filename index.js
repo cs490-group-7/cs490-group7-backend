@@ -7,6 +7,7 @@ const dataRoutes = require('./routes/dataRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const accountSettings = require('./routes/accountSettings')
+const coachRotues = require('./routes/coachRoutes');
 // cors added here
 const cors = require('cors');
 const port = process.env.PORT || 4000;
@@ -26,6 +27,7 @@ app.use('/api/data', dataRoutes);
 app.use('/api/workout', workoutRoutes);
 app.use('/api/progress', progressRoutes)
 app.use('/api/account', accountSettings)
+app.use('/api/coach', coachRotues)
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
