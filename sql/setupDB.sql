@@ -8,7 +8,7 @@ CREATE TABLE Users (
     last_name varchar(50) NOT NULL,
     email varchar(50) UNIQUE NOT NULL,
     password varchar(128) NOT NULL, -- need to figure out how to properly store password
-    user_type ENUM('Client', 'Coach') NOT NULL, -- consider using: is_coach boolean,
+    user_type ENUM('Client', 'Coach', 'Admin') NOT NULL, -- consider using: is_coach boolean,
     phone varchar(20),
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
