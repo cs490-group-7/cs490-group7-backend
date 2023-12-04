@@ -175,8 +175,7 @@ router.post('/filtered-search', async (req, res) => {
 router.post('/request-coach', async (req, res) => {
   try {
     // Extract coachId from the request body
-    const { coachId } = req.body;
-    const clientId = req.user.id;
+    const { coachId, clientId } = req.body;
 
     // Check if the user has already requested this coach
     const checkRequestQuery = 'SELECT * FROM Coach_Request WHERE coach_id = ? AND client_id = ?';
