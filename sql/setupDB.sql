@@ -356,6 +356,15 @@ CREATE TABLE Coach_Client(
     FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE
 );
 
+CREATE TABLE Coach_Request(
+    coach_id int NOT NULL,
+    client_id int NOT NULL,
+    request_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (coach_id, client_id),
+    FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE
+);
 
 CREATE TABLE Goal(
     goal_id int NOT NULL AUTO_INCREMENT,
