@@ -174,7 +174,6 @@ router.post('/filtered-search', async (req, res) => {
 
 router.post('/exercise-bank', async (req, res) => {
   const { exerciseType } = req.body;
-
   try {
     // Construct the SQL query
     let exerciseQuery = 'SELECT * FROM ExerciseBank';
