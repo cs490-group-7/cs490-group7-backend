@@ -37,14 +37,10 @@ router.post('/register', async (req, res) => {
             else resolve(results);
         });
     });
-
     res.status(201).json({ message: "User registered successfully", ident: results[0].id });
-    if (isCoach) {
-      const insertCoachQuery = 'INSERT INTO CoachInitialSurvey (user_id, is_pending_approval, is_approved) VALUES (?, TRUE, FALSE)';
-      await db_conn.query(insertCoachQuery, [results[0].id]);
-    }
-  } catch (error) {
-    console.error('Registration error:', error);
+    
+    } catch (error) {
+      console.error('Registration error:', error);
 
     if (error.code === 'ER_DUP_ENTRY') {
       //console.error('Duplicate email detected:', error.sqlMessage);
