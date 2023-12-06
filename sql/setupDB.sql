@@ -315,6 +315,18 @@ CREATE TABLE WorkoutCalendar(
     CONSTRAINT check_day_of_week CHECK (day_of_week >= 0 AND day_of_week <= 6)
 );
 
+CREATE TABLE WorkoutSession(
+    workout_id int NOT NULL,
+    user_id int NOT NULL,
+    session_date date NOT NULL,
+
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (workout_id, user_id, session_date),
+    FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
+);
+
 CREATE TABLE Chat(
     chat_id int NOT NULL AUTO_INCREMENT,
     coach_id int NOT NULL,
