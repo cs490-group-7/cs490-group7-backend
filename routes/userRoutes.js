@@ -39,6 +39,10 @@ router.post('/register', async (req, res) => {
     });
 
     res.status(201).json({ message: "User registered successfully", ident: results[0].id });
+    if (isCoach) {
+      const insertCoachQuery = 'INSERT INTO CoachInitialSurvey (user_id, is_pending_approval, is_approved) VALUES (?, TRUE, FALSE)';
+      await db_conn.query(insertCoachQuery, [results[0].id]);
+    }
   } catch (error) {
     console.error('Registration error:', error);
 
@@ -169,6 +173,35 @@ router.post('/filtered-search', async (req, res) => {
     console.error('Filtered Coach search error:', error);
     res.status(500).json({ message: "Server error" });
   }
+});
+router.get('/pending-coaches', (req, res) => {
+  const query = `SELECT Users.id, Users.first_name, Users.last_name, CoachInitialSurvey.* 
+                 FROM Users 
+                 JOIN CoachInitialSurvey ON Users.id = CoachInitialSurvey.user_id 
+                 WHERE CoachInitialSurvey.is_pending_approval = TRUE 
+                 AND CoachInitialSurvey.is_approved = FALSE;`;
+  db_conn.query(query, (error, results) => {
+      if (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Error retrieving pending coaches' });
+      }
+      res.status(200).json(results);
+  });
+});
+
+// Update coach approval status
+router.post('/update-coach-approval', (req, res) => {
+  const { coachId, isApproved } = req.body;
+  const query = `UPDATE CoachInitialSurvey 
+                 SET is_pending_approval = FALSE, is_approved = ? 
+                 WHERE user_id = ?;`;
+  db_conn.query(query, [isApproved, coachId], (error, result) => {
+      if (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Error updating coach approval status' });
+      }
+      res.status(200).json({ message: 'Coach approval status updated successfully' });
+  });
 });
 
 module.exports = router;
