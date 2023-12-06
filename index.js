@@ -8,6 +8,9 @@ const workoutRoutes = require('./routes/workoutRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const accountSettings = require('./routes/accountSettings')
 const coachRotues = require('./routes/coachRoutes');
+// swagger
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger-output.json')
 // cors added here
 const cors = require('cors');
 const port = process.env.PORT || 4000;
@@ -28,12 +31,20 @@ app.use('/api/workout', workoutRoutes);
 app.use('/api/progress', progressRoutes)
 app.use('/api/account', accountSettings)
 app.use('/api/coach', coachRotues)
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
+// Swagger middleware
+app.use(bodyParser.json())
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 app.listen(port, () => console.log(`Server is successfully listening on port ${port}`));
 
 module.exports = app;
+
+/* Endpoints */
+//require('./routes')(app)
