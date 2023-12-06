@@ -171,4 +171,33 @@ router.post('/filtered-search', async (req, res) => {
   }
 });
 
+
+router.post('/exercise-bank', async (req, res) => {
+  const { exerciseType } = req.body;
+  try {
+    // Construct the SQL query
+    let exerciseQuery = 'SELECT * FROM ExerciseBank';
+    const queryParams = [];
+
+    // Check if an exercise type is provided
+    if (exerciseType) {
+      exerciseQuery += ' WHERE exercise_type = ?';
+      queryParams.push(exerciseType);
+    }
+
+    // Execute the query
+    const results = await new Promise((resolve, reject) => {
+      db_conn.query(exerciseQuery, queryParams, (error, results, fields) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Exercise Bank search error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;
