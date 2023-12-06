@@ -13,3 +13,6 @@ Installs all required packages
 
 ### `npm run dev`
 Starts and runs the server locally in development mode and connects with your local MySQL database
+
+### `npm run swagger`
+Generates Swagger API Documentation. Visit `http://localhost:4000/doc` after running npm run dev to view it.
