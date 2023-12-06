@@ -41,6 +41,8 @@ CREATE TABLE CoachInitialSurvey (
     city VARCHAR(100),
     state VARCHAR(50),
     price FLOAT,
+    is_pending_approval BOOLEAN DEFAULT TRUE,
+    is_approved BOOLEAN DEFAULT FALSE,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
