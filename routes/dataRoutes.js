@@ -33,10 +33,10 @@ router.post('/dashboard-data', async (req, res) => {
   const userId = req.body.userId;
   try {
       const query = 'SELECT weight AS goalBaseline, weightGoal, weightGoalValue, ('+
-                    'CASE WHEN EXISTS(SELECT weight FROM dailysurvey WHERE user_id=?) '+
-                    'THEN (SELECT weight FROM dailysurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) '+
-                    'ELSE (SELECT weight FROM clientinitialsurvey WHERE user_id=?) END) AS currentWeight, ('+
-                    'SELECT workout_name FROM workoutcalendar, workout WHERE user_id=? AND workoutcalendar.workout_id = workout.workout_id '+
+                    'CASE WHEN EXISTS(SELECT weight FROM DailySurvey WHERE user_id=?) '+
+                    'THEN (SELECT weight FROM DailySurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) '+
+                    'ELSE (SELECT weight FROM ClientInitialSurvey WHERE user_id=?) END) AS currentWeight, ('+
+                    'SELECT workout_name FROM WorkoutCalendar, workout WHERE user_id=? AND WorkoutCalendar.workout_id = workout.workout_id '+
                     'AND WEEKDAY(CURDATE()) = 6) AS workout_name '+ //Change 6 -> day_of_week
                     'FROM ClientInitialSurvey';
       const results = await new Promise((resolve, reject) => {
