@@ -229,4 +229,41 @@ router.post('/exercise-bank', async (req, res) => {
   }
 });
 
+//Coach Request Endpoint
+router.post('/request-coach', async (req, res) => {
+  try {
+    // Extract coachId from the request body
+    const { coachId, clientId } = req.body;
+
+    // Check if the user has already requested this coach
+    const checkRequestQuery = 'SELECT * FROM Coach_Request WHERE coach_id = ? AND client_id = ?';
+    const requestExists = await new Promise((resolve, reject) => {
+      db_conn.query(checkRequestQuery, [coachId, clientId], (error, results) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+
+    if (requestExists.length > 0) {
+      return res.status(400).json({ error: 'You have already requested this coach.' });
+    }
+
+    // Insert the request into the Coach_Request table
+    const insertRequestQuery = 'INSERT INTO Coach_Request (coach_id, client_id) VALUES (?, ?)';
+    await new Promise((resolve, reject) => {
+      db_conn.query(insertRequestQuery, [coachId, clientId], (error, results) => {
+        if (error) reject(error);
+        else resolve(results);
+      });
+    });
+
+    // Send a success response
+    res.status(200).json({ message: 'Coach requested successfully!' });
+  } catch (error) {
+    console.error('Error requesting coach:', error);
+    res.status(500).json({ error: 'An error occurred while requesting the coach.' });
+  }
+});
+
+
 module.exports = router;
