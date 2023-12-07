@@ -201,27 +201,15 @@ router.post('/update-coach-approval', (req, res) => {
 });
 
 
-router.post('/exercise-bank', async (req, res) => {
-  const { exerciseType } = req.body;
+router.get('/exercise-bank', async (req, res) => {
   try {
-    // Construct the SQL query
     let exerciseQuery = 'SELECT * FROM ExerciseBank';
-    const queryParams = [];
-
-    // Check if an exercise type is provided
-    if (exerciseType) {
-      exerciseQuery += ' WHERE exercise_type = ?';
-      queryParams.push(exerciseType);
-    }
-
-    // Execute the query
     const results = await new Promise((resolve, reject) => {
-      db_conn.query(exerciseQuery, queryParams, (error, results, fields) => {
+      db_conn.query(exerciseQuery, (error, results, fields) => {
         if (error) reject(error);
         else resolve(results);
       });
     });
-
     res.status(200).json(results);
   } catch (error) {
     console.error('Exercise Bank search error:', error);
@@ -229,6 +217,31 @@ router.post('/exercise-bank', async (req, res) => {
   }
 });
 
+// Add an exercise to the bank
+router.post('/add-exercise', (req, res) => {
+  const { exercise_name, exercise_type } = req.body;
+  const query = 'INSERT INTO ExerciseBank (exercise_name, exercise_type) VALUES (?, ?);';
+  db_conn.query(query, [exercise_name, exercise_type], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error adding exercise' });
+    }
+    res.status(200).json({ message: 'Exercise added successfully' });
+  });
+});
+
+// Delete an exercise from the bank
+router.post('/delete-exercise', (req, res) => {
+  const { exercise_id } = req.body;
+  const query = 'DELETE FROM ExerciseBank WHERE exercise_id = ?;';
+  db_conn.query(query, [exercise_id], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error deleting exercise' });
+    }
+    res.status(200).json({ message: 'Exercise deleted successfully' });
+  });
+});
 //Coach Request Endpoint
 router.post('/request-coach', async (req, res) => {
   try {
