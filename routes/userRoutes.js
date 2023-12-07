@@ -229,4 +229,30 @@ router.post('/exercise-bank', async (req, res) => {
   }
 });
 
+// Add an exercise to the bank
+router.post('/add-exercise', (req, res) => {
+  const { exercise_name, exercise_type } = req.body;
+  const query = 'INSERT INTO ExerciseBank (exercise_name, exercise_type) VALUES (?, ?);';
+  db_conn.query(query, [exercise_name, exercise_type], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error adding exercise' });
+    }
+    res.status(200).json({ message: 'Exercise added successfully' });
+  });
+});
+
+// Delete an exercise from the bank
+router.post('/delete-exercise', (req, res) => {
+  const { exercise_id } = req.body;
+  const query = 'DELETE FROM ExerciseBank WHERE exercise_id = ?;';
+  db_conn.query(query, [exercise_id], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error deleting exercise' });
+    }
+    res.status(200).json({ message: 'Exercise deleted successfully' });
+  });
+});
+
 module.exports = router;
