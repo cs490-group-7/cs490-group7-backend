@@ -245,7 +245,7 @@ router.post('/request-coach', async (req, res) => {
     });
 
     if (requestExists.length > 0) {
-      return res.status(400).json({ error: 'You have already requested this coach.' });
+      return res.status(400).json({ message: 'You have already requested this coach.' });
     }
 
     // Insert the request into the Coach_Request table
@@ -261,7 +261,7 @@ router.post('/request-coach', async (req, res) => {
     res.status(200).json({ message: 'Coach requested successfully!' });
   } catch (error) {
     console.error('Error requesting coach:', error);
-    res.status(500).json({ error: 'An error occurred while requesting the coach.' });
+    res.status(500).json({ message: 'An error occurred while requesting the coach.' });
   }
 });
 
