@@ -242,6 +242,7 @@ router.post('/delete-exercise', (req, res) => {
     res.status(200).json({ message: 'Exercise deleted successfully' });
   });
 });
+
 //Coach Request Endpoint
 router.post('/request-coach', async (req, res) => {
   try {
@@ -277,6 +278,33 @@ router.post('/request-coach', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while requesting the coach.' });
   }
 });
+
+router.post('/get-coach-requests', (req, res) => {
+  const coachId = req.body.coachId;
+  const query = `select coach_id, client_id, first_name, last_name, ClientInitialSurvey.* from Coach_Request
+    inner join Users on Coach_Request.client_id = Users.id
+    inner join ClientInitialSurvey on Coach_Request.client_id = ClientInitialSurvey.user_id
+    where Coach_Request.coach_id = ? AND Coach_Request.pending = TRUE;`
+  db_conn.query(query, [coachId], (error, results) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error getting requests' });
+      }
+      res.status(200).json(results);
+  });
+})
+
+router.post('/handle-request', (req, res) => {
+  const {coachId, clientId, isAccepted } = req.body;
+  const query = `UPDATE Coach_Request SET pending = FALSE, accepted = ? WHERE coach_id = ? AND client_id = ?`;
+    db_conn.query(query, [isAccepted, coachId, clientId], (error, results) => {
+      if(error){
+        console.error(error)
+        return res.status(500).json({ message: 'Error updating coach request' });
+      }
+      return res.status(200).json({ message: 'Coach request updated succesfully'});
+    });
+})
 
 
 module.exports = router;
