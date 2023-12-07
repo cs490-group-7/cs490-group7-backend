@@ -16,13 +16,11 @@ router.post('/check-approval-status', (req, res) => {
     });
 });
 
-
-
 router.post('/get-current-clients', (req, res) => {
     const coachId = req.body.userId;
-    const query = `select coach_id, client_id, first_name, last_name from Coach_Client
-        inner join Users on Coach_Client.client_id = Users.id
-        where Coach_Client.coach_id = ?;`
+    const query = `select coach_id, client_id, first_name, last_name from Coach_Request
+        inner join Users on Coach_Request.client_id = Users.id
+        where Coach_Request.coach_id = ? AND Coach_Request.accepted = TRUE;`
     db_conn.query(query, [coachId], (error, result) => {
         if(error){
             console.error(error)

@@ -367,6 +367,8 @@ CREATE TABLE Coach_Client(
 CREATE TABLE Coach_Request(
     coach_id int NOT NULL,
     client_id int NOT NULL,
+    accepted BOOLEAN DEFAULT FALSE,
+    pending BOOLEAN DEFAULT TRUE,
     request_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (coach_id, client_id),
