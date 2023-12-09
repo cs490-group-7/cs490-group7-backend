@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../index'); // Assuming your main app file is named index.js
+const app = require('../index'); 
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -10,7 +10,7 @@ describe('Coach Routes', () => {
     chai.request(app)
       .post('/api/coach/check-approval-status')
       .send({
-        userId: 1 // Replace with a valid user ID
+        userId: 1
       })
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -31,7 +31,6 @@ describe('Coach Routes', () => {
       })
       .end((err, res) => {
         expect(res).to.have.status(200);
-        // Add assertions based on the expected response for coach lookup
         done();
       });
   });
