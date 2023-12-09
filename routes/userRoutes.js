@@ -117,59 +117,6 @@ router.post('/coach-details', async (req, res) => {
   }
 });
 
-router.post('/filtered-search', async (req, res) => {
-  const { experience, specializations, city, state, maxPrice } = req.body;
-  
-  try {
-    // Build the dynamic SQL query based on filters
-    let userQuery = 'SELECT Users.first_name, Users.last_name, Users.id FROM Users JOIN CoachInitialSurvey ON Users.id = CoachInitialSurvey.user_id WHERE Users.user_type = \'Coach\'';
-
-    // Add filters based on user input
-    const filterConditions = [];
-    const filterValues = [];
-
-    if (experience) {
-      filterConditions.push('CoachInitialSurvey.experience >= ?');
-      filterValues.push(experience);
-    }
-
-    if (specializations) {
-      filterConditions.push('CoachInitialSurvey.specializations = ?');
-      filterValues.push(specializations);
-    }
-
-    if (city) {
-      filterConditions.push('CoachInitialSurvey.city = ?');
-      filterValues.push(city);
-    }
-
-    if (state) {
-      filterConditions.push('CoachInitialSurvey.state = ?');
-      filterValues.push(state);
-    }
-
-    if (maxPrice) {
-      filterConditions.push('CoachInitialSurvey.price <= ?');
-      filterValues.push(maxPrice);
-    }
-
-    if (filterConditions.length > 0) {
-      userQuery += ` AND ${filterConditions.join(' AND ')}`;
-    }
-
-    const results = await new Promise((resolve, reject) => {
-      db_conn.query(userQuery, filterValues, (error, results, fields) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
-
-    res.status(200).json({ message: "Filtered coach search successful", coaches: results });
-  } catch (error) {
-    console.error('Filtered Coach search error:', error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 router.get('/pending-coaches', (req, res) => {
   const query = `SELECT Users.id, Users.first_name, Users.last_name, CoachInitialSurvey.* 
                  FROM Users 
