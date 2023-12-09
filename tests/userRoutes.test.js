@@ -10,9 +10,9 @@ describe('User Routes', () => {
     chai.request(app)
       .post('/api/users/register')
       .send({
-        firstName: 'John',
+        firstName: 'Joe',
         lastName: 'Doe',
-        email: 'john.doe@example.com',
+        email: 'joe.doe@example.com',
         password: '#Password123',
         phone: '1234567890',
         isCoach: false
@@ -28,7 +28,7 @@ describe('User Routes', () => {
     chai.request(app)
       .post('/api/users/login')
       .send({
-        email: 'john.doe@example.com',
+        email: 'joe.doe@example.com',
         password: '#Password123'
       })
       .end((err, res) => {
