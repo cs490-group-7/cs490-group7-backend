@@ -25,8 +25,8 @@ describe('Coach Routes', () => {
       .send({
         experience: 2,
         specializations: 'Losing Weight',
-        city: 'New York',
-        state: 'NY',
+        city: 'Newark',
+        state: 'New Jersey',
         maxPrice: 50
       })
       .end((err, res) => {
