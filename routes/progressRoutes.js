@@ -1,74 +1,49 @@
 const express = require('express');
-const db_conn = require('../db_connection');
-
+const ProgressController = require('../controllers/progressController');
 const router = express.Router();
 
 router.post('/progress-data', async (req, res) => {
-    const userId = req.body.userId;
-    try {
-        const query = 'SELECT date, weight, calorie_intake, water_intake FROM DailySurvey WHERE user_id = ?';
-        const results = await new Promise((resolve, reject) => {
-            db_conn.query(query, [userId], (error, results, fields) => {
-                if (error) reject(error);
-                else resolve(results);
-            });
-        });
-        res.json(results);
-    } catch (error) {
-        console.error('Data retrieval error:', error);
-        res.status(500).json({ message: "Error retrieving progress data" });
-    }
+  const userId = req.body.userId;
+  try {
+    const progressData = await ProgressController.getProgressData(userId);
+    res.json(progressData);
+  } catch (error) {
+    console.error('Data retrieval error:', error);
+    res.status(500).json({ message: 'Error retrieving progress data' });
+  }
 });
 
 router.post('/goal-info', async (req, res) => {
-    const userId = req.body.userId;
-    try {
-        const query = 'SELECT weightGoal, weightGoalValue FROM ClientInitialSurvey WHERE user_id = ?';
-        const results = await new Promise((resolve, reject) => {
-            db_conn.query(query, [userId], (error, results, fields) => {
-                if (error) reject(error);
-                else resolve(results);
-            });
-        });
-        res.json(results[0]);
-    } catch (error) {
-        console.error('Data retrieval error:', error);
-        res.status(500).json({ message: "Error retrieving progress data" });
-    }
+  const userId = req.body.userId;
+  try {
+    const goalInfo = await ProgressController.getGoalInfo(userId);
+    res.json(goalInfo);
+  } catch (error) {
+    console.error('Data retrieval error:', error);
+    res.status(500).json({ message: 'Error retrieving goal info' });
+  }
 });
 
 router.post('/current-weight', async (req, res) => {
-    const userId = req.body.userId;
-    try {
-        const query = 'SELECT (CASE WHEN EXISTS(SELECT weight FROM DailySurvey WHERE user_id= ?) THEN (SELECT weight FROM DailySurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) ELSE (SELECT weight FROM ClientInitialSurvey WHERE user_id= ?) END) AS weight';
-        const results = await new Promise((resolve, reject) => {
-            db_conn.query(query, [userId, userId, userId], (error, results, fields) => {
-                if (error) reject(error);
-                else resolve(results);
-            });
-        });
-        res.json(results[0]);
-    } catch (error) {
-        console.error('Data retrieval error:', error);
-        res.status(500).json({ message: "Error retrieving progress data" });
-    }
+  const userId = req.body.userId;
+  try {
+    const currentWeight = await ProgressController.getCurrentWeight(userId);
+    res.json(currentWeight);
+  } catch (error) {
+    console.error('Data retrieval error:', error);
+    res.status(500).json({ message: 'Error retrieving current weight' });
+  }
 });
 
-router.post('/update-goal-info', (req, res) => {
-    const inputData = req.body;
-    const values = [
-        inputData.weightGoal,
-        inputData.weightGoalValue,
-        inputData.userId
-    ]
-    const query = 'UPDATE ClientInitialSurvey SET weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;'
-    db_conn.query(query, values, (error, result) => {
-        if(error){
-            console.error(error)
-            return res.status(500).json({ message: 'Error updating goal' });
-        }
-        res.status(200).json({ message: 'Goal updated successfully' });
-    });
-})
+router.post('/update-goal-info', async (req, res) => {
+  const inputData = req.body;
+  try {
+    const result = await ProgressController.updateGoalInfo(inputData);
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating goal info:', error);
+    res.status(500).json({ message: 'Error updating goal info' });
+  }
+});
 
 module.exports = router;
