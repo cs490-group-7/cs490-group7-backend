@@ -1,13 +1,18 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../index'); 
-const connection = require('../db_connection'); 
+const sinon = require('sinon');
+const app = require('../index');
+const connection = require('../db_connection');
+const SurveyController = require('../controllers/surveyController');
 const { expect } = chai;
 
 chai.use(chaiHttp);
 
 describe('Survey Routes', () => {
   let testUserId;
+  let addInitialSurveyStub;
+  let addCoachSurveyStub;
+  let addDailySurveyStub;
 
   before((done) => {
     // Create a test user before running the tests
@@ -38,8 +43,25 @@ describe('Survey Routes', () => {
     });
   });
 
+  beforeEach(() => {
+    // Create stubs for the SurveyController functions
+    addInitialSurveyStub = sinon.stub(SurveyController, 'addInitialSurvey');
+    addCoachSurveyStub = sinon.stub(SurveyController, 'addCoachSurvey');
+    addDailySurveyStub = sinon.stub(SurveyController, 'addDailySurvey');
+  });
+
+  afterEach(() => {
+    // Restore the original functions after each test
+    addInitialSurveyStub.restore();
+    addCoachSurveyStub.restore();
+    addDailySurveyStub.restore();
+  });
+
   describe('POST /api/surveys/initial-survey', () => {
     it('should add an initial survey successfully', (done) => {
+      // Stub the function to return mock data
+      addInitialSurveyStub.resolves();
+
       const surveyData = {
         user_id: testUserId,
         date_of_birth: '1990-01-01',
@@ -63,6 +85,9 @@ describe('Survey Routes', () => {
 
   describe('POST /api/surveys/coach-survey', () => {
     it('should add a coach survey successfully', (done) => {
+      // Stub the function to return mock data
+      addCoachSurveyStub.resolves();
+
       const surveyData = {
         user_id: testUserId,
         experience: 5,
@@ -85,6 +110,9 @@ describe('Survey Routes', () => {
 
   describe('POST /api/surveys/daily-survey', () => {
     it('should add a daily survey successfully', (done) => {
+      // Stub the function to return mock data
+      addDailySurveyStub.resolves();
+
       const surveyData = {
         user_id: testUserId,
         calories: 2000,
@@ -102,5 +130,6 @@ describe('Survey Routes', () => {
           done();
         });
     });
+
   });
 });

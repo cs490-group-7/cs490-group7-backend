@@ -40,25 +40,27 @@ const surveyController = {
 
   addDailySurvey: async (surveyData) => {
     try {
-      const checkDuplicateQuery = 'SELECT * FROM DailySurvey WHERE user_id=? AND date=?';
-      const duplicateSurvey = await db_conn.query(checkDuplicateQuery, [surveyData.user_id, surveyData.date]);
-
-      if (duplicateSurvey.length > 0) {
-        return { message: "You've already submitted a survey for today" }; // Return a response instead of throwing an error
-      }
-
-      const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
+      const currentDate = new Date().toISOString().split('T')[0]; // Get the current date in 'YYYY-MM-DD' format
+    
+      const query = 'INSERT INTO DailySurvey (user_id, date, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?, ?)';
       const values = [
         surveyData.user_id,
+        currentDate,
         surveyData.calories,
         surveyData.waterIntake,
         surveyData.weight,
         surveyData.mood,
       ];
+    
       await db_conn.query(query, values);
-
-      return { message: 'Daily survey added successfully' }; // Return success message
+    
+      return { message: 'Daily survey added successfully' };
     } catch (error) {
+      // Check if the error is a duplicate entry error
+      if (error.errno === 1062) {
+        return { message: "You've already submitted a survey for today" };
+      }
+    
       console.error('Error adding daily survey:', error);
       throw new Error('Error adding daily survey');
     }

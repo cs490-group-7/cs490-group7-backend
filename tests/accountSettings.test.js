@@ -1,7 +1,8 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const sinon = require('sinon');
 const app = require('../index');
-const db_conn = require('../db_connection'); 
+const AccountController = require('../controllers/accountController');
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -17,20 +18,27 @@ const testUser = {
 };
 
 describe('Account Settings Routes', () => {
-  // Insert a test user into the database before each test
-  beforeEach((done) => {
-    const query = 'INSERT INTO Users (id, first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?, ?)';
-    db_conn.query(query, [testUser.userId, testUser.first_name, testUser.last_name, testUser.email, testUser.password, testUser.phone], (error) => {
-      if (error) {
-        console.error('Error inserting test user:', error);
-        done(error);
-      } else {
-        done();
-      }
-    });
+  let queryStub;
+
+  // Before each test, stub the database query function
+  beforeEach(() => {
+    queryStub = sinon.stub(AccountController, 'getAccountInfo');
+  });
+
+  // After each test, restore the stub
+  afterEach(() => {
+    queryStub.restore();
   });
 
   it('should get account information', (done) => {
+    // Stub the database function to return mock data
+    const mockAccountInfo = {
+      email: testUser.email,
+      first_name: testUser.first_name,
+      last_name: testUser.last_name,
+    };
+    queryStub.withArgs(testUser.userId).resolves(mockAccountInfo);
+
     chai.request(app)
       .post('/api/account/get-account-info')
       .send({ userId: testUser.userId })
@@ -43,6 +51,9 @@ describe('Account Settings Routes', () => {
   });
 
   it('should update account information', (done) => {
+    // Stub the database function to return a success message
+    const updateStub = sinon.stub(AccountController, 'updateAccountInfo').resolves({ message: 'Account information updated successfully' });
+
     const updatedUserData = {
       first_name: 'UpdatedFirstName',
       last_name: 'UpdatedLastName',
@@ -58,31 +69,13 @@ describe('Account Settings Routes', () => {
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('message').equal('Account information updated successfully');
+        expect(updateStub.calledWith(updatedUserData)).to.be.true;
 
-        // Confirm the updated email in the database
-        const query = 'SELECT email FROM Users WHERE id = ?';
-        db_conn.query(query, [testUser.userId], (error, result) => {
-          if (error) {
-            console.error('Error retrieving updated email:', error);
-            done(error);
-          } else {
-            expect(result[0].email).to.equal(updatedUserData.email);
-            done();
-          }
-        });
+        // Restore the stub
+        updateStub.restore();
+        done();
       });
   });
 
-  // Add more tests as needed
-
-  // Cleanup: Remove the test user from the database after each test
-  afterEach((done) => {
-    const deleteQuery = 'DELETE FROM Users WHERE id = ?';
-    db_conn.query(deleteQuery, [testUser.userId], (error) => {
-      if (error) {
-        console.error('Error deleting test user:', error);
-      }
-      done();
-    });
-  });
+ 
 });

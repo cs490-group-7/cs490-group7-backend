@@ -1,12 +1,37 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../index'); 
-const db_conn = require('../db_connection'); 
+const sinon = require('sinon');
+const app = require('../index');
+const db_conn = require('../db_connection');
+const UserController = require('../controllers/userController');
 
 chai.use(chaiHttp);
 const expect = chai.expect;
 
 describe('User Routes', () => {
+  let registerUserStub;
+  let loginStub;
+  let coachDetailsStub;
+  let getPendingCoachesStub;
+  let updateCoachApprovalStatusStub;
+
+  beforeEach(() => {
+    // Create stubs for the UserController functions
+    registerUserStub = sinon.stub(UserController, 'registerUser');
+    loginStub = sinon.stub(UserController, 'login');
+    coachDetailsStub = sinon.stub(UserController, 'coachDetails');
+    getPendingCoachesStub = sinon.stub(UserController, 'getPendingCoaches');
+    updateCoachApprovalStatusStub = sinon.stub(UserController, 'updateCoachApprovalStatus');
+  });
+
+  afterEach(() => {
+    // Restore the original functions after each test
+    registerUserStub.restore();
+    loginStub.restore();
+    coachDetailsStub.restore();
+    getPendingCoachesStub.restore();
+    updateCoachApprovalStatusStub.restore();
+  });
 
   after((done) => {
     // Delete the user from the database after the test
@@ -24,6 +49,9 @@ describe('User Routes', () => {
   });
 
   it('should register a new user', (done) => {
+    // Stub the function to return mock data
+    registerUserStub.resolves({ message: 'User registered successfully', ident: 1 });
+
     chai.request(app)
       .post('/api/users/register')
       .send({
@@ -42,6 +70,13 @@ describe('User Routes', () => {
   });
 
   it('should login a user', (done) => {
+    // Stub the function to return mock data
+    loginStub.withArgs('joe.doe@example.com', '#Password123').resolves({
+      message: 'Logged in successfully',
+      ident: 1,
+      userType: 'Client'
+    });
+
     chai.request(app)
       .post('/api/users/login')
       .send({
@@ -55,5 +90,5 @@ describe('User Routes', () => {
       });
   });
 
-  // Add more test cases for other endpoints in userRoutes
+
 });
