@@ -23,7 +23,7 @@ const UserController = {
       );
 
       const userId = await UserController.getUserIdByEmail(email);
-      console.log("SUCCESS!");
+
       res.status(201).json({ message: 'User registered successfully', ident: userId });
     } catch (error) {
       UserController.handleRegistrationError(error, res);
