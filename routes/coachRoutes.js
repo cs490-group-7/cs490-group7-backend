@@ -15,6 +15,37 @@ router.post('/check-approval-status', (req, res) => {
         res.status(200).json({ isPendingApproval });
     });
 });
+// Endpoint to get current clients for a coach
+router.post('/get-current-clients', (req, res) => {
+  const coachId = req.body.userId;
+
+  const query = `
+      SELECT Users.id, Users.first_name, Users.last_name FROM Users
+      JOIN Coach_Request ON Users.id = Coach_Request.client_id
+      WHERE Coach_Request.coach_id = ? AND Coach_Request.accepted = TRUE;
+  `;
+
+  db_conn.query(query, [coachId], (error, results) => {
+      if (error) {
+          console.error('Error fetching current clients:', error);
+          return res.status(500).json({ message: 'Error fetching current clients' });
+      }
+      res.status(200).json(results);
+  });
+});
+// Endpoint to retrieve the progress data for client.
+router.post('/client-progress', (req, res) => {
+  const clientId = req.body.clientId;
+  const query = 'SELECT * FROM DailySurvey WHERE user_id = ? ORDER BY date DESC';
+
+  db_conn.query(query, [clientId], (error, results) => {
+      if (error) {
+          console.error('Error fetching client progress:', error);
+          return res.status(500).json({ message: 'Error fetching client progress' });
+      }
+      res.status(200).json(results);
+  });
+});
 
 // Route for coach lookup, fetching only approved coaches
 router.post('/coach-lookup', (req, res) => {
