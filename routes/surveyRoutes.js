@@ -1,75 +1,35 @@
 const express = require('express');
+const SurveyController = require('../controllers/surveyController');
 const router = express.Router();
-const connection = require('../db_connection');
 
-router.post('/initial-survey', (req, res) => {
+router.post('/initial-survey', async (req, res) => {
+  try {
     const surveyData = req.body;
-    const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, weightGoal, weightGoalValue) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const values = [
-      surveyData.user_id,
-      surveyData.date_of_birth,
-      surveyData.gender,
-      surveyData.height,
-      surveyData.weight,
-      surveyData.weightGoal,
-      surveyData.weightGoalValue
-    ];
-
-    connection.query(query, values, (error, result) => {
-        if(error){
-            console.error(error)
-            return res.status(400).json({ message: "Server error" });
-        }
-        res.status(200).json({ message: 'Initial survey added successfully' });
-    });
+    await SurveyController.addInitialSurvey(surveyData);
+    res.status(200).json({ message: 'Initial survey added successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-router.post('/coach-survey', (req, res) => {
+router.post('/coach-survey', async (req, res) => {
+  try {
     const surveyData = req.body;
-
-    const query = 'INSERT INTO CoachInitialSurvey (user_id, experience, specializations, city, state, price) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [
-      surveyData.user_id,
-      surveyData.experience,
-      surveyData.specializations,
-      surveyData.city,
-      surveyData.state,
-      surveyData.price,
-    ];
-
-    connection.query(query, values, (error, result) => {
-        if(error){
-            console.error(error)
-            return res.status(400).json({ message: "Server error" });
-        }
-        res.status(200).json({ message: 'Coach survey added successfully' });
-    });
-});
-router.post('/daily-survey', (req, res) => {
-    const surveyData = req.body;
-
-    const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
-    const values = [
-      surveyData.user_id,
-      surveyData.calories,
-      surveyData.waterIntake,
-      surveyData.weight,
-      surveyData.mood,
-    ];
-
-    connection.query(query, values, (error, result) => {
-        if(error){
-            if (error.code === 'ER_DUP_ENTRY') {
-                console.log("Duplicate Survey Detected");
-                return res.status(400).json({ message: "You've already submitted a survey for today" });
-            } else {
-                console.error(error);
-                return res.status(400).json({ message: "Server error" });
-            }
-        }
-        res.status(200).json({ message: 'Daily survey added successfully' });
-    });
+    await SurveyController.addCoachSurvey(surveyData);
+    res.status(200).json({ message: 'Coach survey added successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
+router.post('/daily-survey', async (req, res) => {
+  try {
+    const surveyData = req.body;
+    await SurveyController.addDailySurvey(surveyData);
+    res.status(200).json({ message: 'Daily survey added successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

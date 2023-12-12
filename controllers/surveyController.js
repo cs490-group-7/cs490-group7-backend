@@ -1,87 +1,59 @@
-// surveyController.js
-
 const db_conn = require('../db_connection');
 
-class surveyController {
-  async getCoachSurvey(req, res) {
-    const { userId } = req.body;
-    const query = 'SELECT * FROM CoachInitialSurvey WHERE user_id = ?';
-
+const surveyController = {
+  addInitialSurvey: async (surveyData) => {
     try {
-      const results = await this.executeQuery(query, [userId]);
-      res.status(200).json(results[0] || {});
+      const query = 'INSERT INTO ClientInitialSurvey (user_id, date_of_birth, gender, height, weight, weightGoal, weightGoalValue) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      const values = [
+        surveyData.user_id,
+        surveyData.date_of_birth,
+        surveyData.gender,
+        surveyData.height,
+        surveyData.weight,
+        surveyData.weightGoal,
+        surveyData.weightGoalValue,
+      ];
+      await db_conn.query(query, values);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error retrieving coach survey' });
+      console.error('Error adding initial survey:', error);
+      throw new Error('Error adding initial survey');
     }
-  }
+  },
 
-  async getClientSurvey(req, res) {
-    const { userId } = req.body;
-    const query = 'SELECT * FROM ClientInitialSurvey WHERE user_id = ?';
-
+  addCoachSurvey: async (surveyData) => {
     try {
-      const results = await this.executeQuery(query, [userId]);
-      res.status(200).json(results[0] || {});
+      const query = 'INSERT INTO CoachInitialSurvey (user_id, experience, specializations, city, state, price) VALUES (?, ?, ?, ?, ?, ?)';
+      const values = [
+        surveyData.user_id,
+        surveyData.experience,
+        surveyData.specializations,
+        surveyData.city,
+        surveyData.state,
+        surveyData.price,
+      ];
+      await db_conn.query(query, values);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error retrieving client survey' });
+      console.error('Error adding coach survey:', error);
+      throw new Error('Error adding coach survey');
     }
-  }
+  },
 
-  async updateCoachSurvey(req, res) {
-    const inputData = req.body;
-    const values = [
-      inputData.experience,
-      inputData.specializations,
-      inputData.city,
-      inputData.state,
-      inputData.price,
-      inputData.userId,
-    ];
-    const query = `INSERT INTO CoachInitialSurvey (experience, specializations, city, state, price, user_id) VALUES (?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE experience = VALUES(experience), specializations = VALUES(specializations),
-      city = VALUES(city), state = VALUES(state), price = VALUES(price);`;
-
+  addDailySurvey: async (surveyData) => {
     try {
-      await this.executeQuery(query, values);
-      res.status(200).json({ message: 'Coach survey updated successfully' });
+      const query = 'INSERT INTO DailySurvey (user_id, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?)';
+      const values = [
+        surveyData.user_id,
+        surveyData.calories,
+        surveyData.waterIntake,
+        surveyData.weight,
+        surveyData.mood,
+      ];
+      await db_conn.query(query, values);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error updating coach survey' });
+      console.error('Error adding daily survey:', error);
+      throw new Error('Error adding daily survey');
     }
-  }
+  },
+};
 
-  async updateClientSurvey(req, res) {
-    const inputData = req.body;
-    const values = [
-      inputData.age,
-      inputData.gender,
-      inputData.fitnessGoal,
-      inputData.fitnessLevel,
-      inputData.userId,
-    ];
-    const query = `INSERT INTO ClientInitialSurvey (age, gender, fitness_goal, fitness_level, user_id) VALUES (?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE age = VALUES(age), gender = VALUES(gender),
-      fitness_goal = VALUES(fitness_goal), fitness_level = VALUES(fitness_level);`;
-
-    try {
-      await this.executeQuery(query, values);
-      res.status(200).json({ message: 'Client survey updated successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error updating client survey' });
-    }
-  }
-
-  async executeQuery(query, params) {
-    return new Promise((resolve, reject) => {
-      db_conn.query(query, params, (error, results) => {
-        if (error) reject(error);
-        else resolve(results);
-      });
-    });
-  }
-}
-
-module.exports = new surveyController();
+module.exports = surveyController;
