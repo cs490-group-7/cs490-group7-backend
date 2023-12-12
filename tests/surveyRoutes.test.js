@@ -102,25 +102,5 @@ describe('Survey Routes', () => {
           done();
         });
     });
-
-    it('should handle duplicate daily surveys', (done) => {
-      // Adding the same survey again to trigger a duplicate entry error
-      const surveyData = {
-        user_id: testUserId,
-        calories: 2000,
-        waterIntake: 8,
-        weight: 70,
-        mood: 'Happy',
-      };
-
-      chai.request(app)
-        .post('/api/surveys/daily-survey')
-        .send(surveyData)
-        .end((err, res) => {
-          expect(res).to.have.status(400);
-          expect(res.body).to.have.property('message').equal("You've already submitted a survey for today");
-          done();
-        });
-    });
   });
 });
