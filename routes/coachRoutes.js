@@ -30,6 +30,21 @@ router.post('/get-current-clients', (req, res) => {
   });
 })
 
+router.post('/get-current-coach', (req, res) => {
+  const clientId = req.body.userId;
+  const query = `select coach_id, client_id, first_name, last_name, specializations, experience, city, state, price from Coach_Request
+      inner join Users on Coach_Request.coach_id = Users.id
+      inner join CoachInitialSurvey on Coach_Request.coach_id = CoachInitialSurvey.user_id
+      where Coach_Request.client_id = ? AND Coach_Request.accepted = TRUE;`
+  db_conn.query(query, [clientId], (error, result) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error retrieving current coach' });
+      }
+      res.status(200).json(result);
+  });
+})
+
 // Endpoint to retrieve the progress data for client.
 router.post('/client-progress', (req, res) => {
   const clientId = req.body.clientId;
