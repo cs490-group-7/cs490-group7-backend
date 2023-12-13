@@ -301,7 +301,7 @@ router.post('/unassign-workout', async (req, res) => {
 });
 
 router.post('/log-session', async (req, res) => {
-    const { userId, workoutId, sessionDate, dayOfWeek } = req.body;
+    const { userId, workoutId, sessionDate, dayOfWeek, exercises } = req.body;
   
     try {
         // Check if user exists
@@ -358,6 +358,24 @@ router.post('/log-session', async (req, res) => {
             db_conn.query(checkSessionQuery, [workoutId, userId, dayOfWeek], (error, results) => {
                 if (error) reject(error);
                 else resolve(results);
+            });
+        });
+
+        // Retrieve the id of the logged session
+        const session = await new Promise((resolve, reject) => {
+            db_conn.query('SELECT * FROM WorkoutSession ORDER BY session_id DESC LIMIT 1', (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+
+        // Log the session's exercises
+        exercises.map(async (exercise, i) => {
+            await new Promise((resolve, reject) => {
+                db_conn.query('INSERT INTO SessionExercise (session_id, workout_id, exercise_id, exercise_order, reps) VALUES (?, ?, ?, ?, ?)', [session[0].session_id, workoutId, exercise.exercise_id, i, exercise.total], (error, results, fields) => {
+                    if (error) reject(error);
+                    else resolve(results);
+                });
             });
         });
         res.status(201).json({ message: "Session logged successfully" });
