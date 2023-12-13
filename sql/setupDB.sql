@@ -427,7 +427,7 @@ CREATE TABLE DailySurvey (
 );
 
 CREATE TABLE CoachRemoval (
-    removal_id INT NOT NULL,
+    removal_id INT AUTO_INCREMENT NOT NULL,
     user_id INT NOT NULL,
     coach_id INT NOT NULL,
     reason TEXT,
