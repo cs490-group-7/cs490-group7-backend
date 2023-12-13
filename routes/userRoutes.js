@@ -9,10 +9,9 @@ const router = express.Router();
 // Registration Endpoint
 router.post('/register', async (req, res) => {
   try {
-    const result = await UserController.registerUser(req, res);
-    res.status(201).json(result); // Assuming the result contains the desired response
+    const result = await UserController.registerUser(req.body);
+    res.status(201).json(result);
   } catch (error) {
-    // Handle errors here if needed
     console.error('Error in registration:', error);
     res.status(500).json({ message: 'Server error' });
   }

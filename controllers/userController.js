@@ -2,31 +2,42 @@ const bcrypt = require('bcrypt');
 const db_conn = require('../db_connection');
 
 const UserController = {
-  registerUser: async (req, res) => {
-    const { firstName, lastName, email, password, phone, isCoach } = req.body;
-
+  registerUser: async ({ firstName, lastName, email, password, phone, isCoach }) => {
     try {
       // Check if user already exists
-      const userExists = await UserController.checkUserExists(email);
-      if (userExists) {
-        return res.status(400).json({ message: `User already exists with email: ${email}` });
+      const checkUserQuery = 'SELECT email FROM Users WHERE email = ?';
+      const userExists = await new Promise((resolve, reject) => {
+        db_conn.query(checkUserQuery, [email], (error, results) => {
+          if (error) reject(error);
+          else resolve(results);
+        });
+      });
+
+      if (userExists.length > 0) {
+        return { message: `User already exists with email: ${email}` };
       }
 
       // Hash the password
-      const hashedPassword = await UserController.hashPassword(password);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       // Insert user into the database
       const userType = isCoach ? 'Coach' : 'Client';
-      const result = await db_conn.query(
-        'INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)',
-        [firstName, lastName, email, hashedPassword, userType, phone]
-      );
+      await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType, phone]);
 
-      const userId = result.insertId; // Assuming this is how you retrieve the new user's ID
+      // Retrieve the user's ID based on their email
+      const userQuery = 'SELECT id FROM Users WHERE email = ?';
+      const userResults = await new Promise((resolve, reject) => {
+        db_conn.query(userQuery, [email], (error, results, fields) => {
+          if (error) reject(error);
+          else resolve(results);
+        });
+      });
 
-      return res.status(201).json({ message: 'User registered successfully', ident: userId });
+      return { message: 'User registered successfully', ident: userResults[0].id };
     } catch (error) {
-      UserController.handleRegistrationError(error, res);
+      // If an error occurs, handle it appropriately
+      UserController.handleRegistrationError(error);
     }
   },
 
