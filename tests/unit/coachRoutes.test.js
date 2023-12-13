@@ -1,8 +1,8 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const app = require('../index');
-const CoachController = require('../controllers/coachController');
+const app = require('../../index');
+const CoachController = require('../../controllers/coachController');
 
 chai.use(chaiHttp);
 const expect = chai.expect;

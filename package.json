@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=5000 --forceExit",
+    "test": "mocha tests/**/*.test.js",
     "dev": "set NODE_ENV=local&& nodemon index.js",
     "start": "set NODE_ENV=prod&& node index.js",
     "swagger": "node ./swagger.js"
