@@ -13,6 +13,21 @@ const coachController = {
     }
   },
 
+   getCurrentClients: async (coachId) => {
+    try {
+      const query = `SELECT coach_id, client_id, first_name, last_name FROM Coach_Request
+        INNER JOIN Users ON Coach_Request.client_id = Users.id
+        WHERE Coach_Request.coach_id = ? AND Coach_Request.accepted = TRUE;`;
+
+      const results = await queryAsync(query, [coachId]);
+      return results || [];
+    } catch (error) {
+      console.error('Error retrieving current clients:', error);
+      throw new Error('Error retrieving current clients');
+    }
+  },
+
+
   coachLookup: async (filters) => {
     try {
       const { experience, specializations, city, state, maxPrice } = filters;

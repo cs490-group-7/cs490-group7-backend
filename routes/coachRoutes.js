@@ -12,6 +12,16 @@ router.post('/check-approval-status', async (req, res) => {
   }
 });
 
+router.post('/get-current-clients', async (req, res) => {
+  try {
+    const coachId = req.body.userId;
+    const results = await CoachController.getCurrentClients(coachId);
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.post('/coach-lookup', async (req, res) => {
   try {
     const filters = req.body;
