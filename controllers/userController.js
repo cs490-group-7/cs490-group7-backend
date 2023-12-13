@@ -17,14 +17,14 @@ const UserController = {
 
       // Insert user into the database
       const userType = isCoach ? 'Coach' : 'Client';
-      await db_conn.query(
+      const result = await db_conn.query(
         'INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)',
         [firstName, lastName, email, hashedPassword, userType, phone]
       );
 
-      const userId = await UserController.getUserIdByEmail(email);
+      const userId = result.insertId; // Assuming this is how you retrieve the new user's ID
 
-      res.status(201).json({ message: 'User registered successfully', ident: userId });
+      return res.status(201).json({ message: 'User registered successfully', ident: userId });
     } catch (error) {
       UserController.handleRegistrationError(error, res);
     }

@@ -6,7 +6,17 @@ const UserController = require('../controllers/userController');
 const router = express.Router();
 
 // Registration Endpoint
-router.post('/register', UserController.registerUser);
+// Registration Endpoint
+router.post('/register', async (req, res) => {
+  try {
+    const result = await UserController.registerUser(req, res);
+    res.status(201).json(result); // Assuming the result contains the desired response
+  } catch (error) {
+    // Handle errors here if needed
+    console.error('Error in registration:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 //Login Endpoint
 router.post('/login', async (req, res) => {

@@ -24,6 +24,7 @@ describe('User Routes', () => {
   });
 
   it('should register a new user', (done) => {
+    registerUserStub.reset()
     // Stub the function to return mock data
     registerUserStub.resolves({ message: 'User registered successfully', ident: 1 });
   
