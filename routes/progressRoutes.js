@@ -71,4 +71,39 @@ router.post('/update-goal-info', (req, res) => {
     });
 })
 
+router.post('/workout-progress', async (req, res) => {
+    const { userId, sinceDate } = req.body;
+
+    try {
+        // Check if user exists
+        const checkUserQuery = 'SELECT id FROM Users WHERE id=?';
+        const userExists = await new Promise((resolve, reject) => {
+            db_conn.query(checkUserQuery, [userId], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        if (userExists.length === 0) {
+            return res.status(400).json({ message: "User does not exist: " + userId.toString() });
+        }
+
+        // Get the logs for the user
+        const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps) AS listed, SUM(SE.reps) AS completed ' +
+            'FROM fitness_app.SessionExercise as SE, fitness_app.WorkoutSession as WS, fitness_app.Workout_Exercise as WE '+
+            'WHERE SE.workout_id=WE.workout_id AND WS.session_id=SE.session_id AND WS.user_id=? AND WS.session_date>? ' +
+            'GROUP BY SE.session_id;';
+        const sessions = await new Promise((resolve, reject) => {
+            db_conn.query(logQuery, [userId, sinceDate], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        
+        res.json(sessions);
+    } catch (error) {
+        console.error('Log retrieval error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 module.exports = router;
