@@ -2,46 +2,15 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 const app = require('../index');
-const connection = require('../db_connection');
 const SurveyController = require('../controllers/surveyController');
-const { expect } = chai;
 
 chai.use(chaiHttp);
+const expect = chai.expect;
 
 describe('Survey Routes', () => {
-  let testUserId;
   let addInitialSurveyStub;
   let addCoachSurveyStub;
   let addDailySurveyStub;
-
-  before((done) => {
-    // Create a test user before running the tests
-    const userQuery = 'INSERT INTO Users (first_name, last_name, email, password, user_type) VALUES (?, ?, ?, ?, ?)';
-    const userValues = ['Test', 'User', 'testuser@example.com', '#Pass123', 'Coach'];
-
-    connection.query(userQuery, userValues, (error, result) => {
-      if (error) {
-        console.error('Error creating test user:', error);
-        done(error);
-      } else {
-        testUserId = result.insertId;
-        done();
-      }
-    });
-  });
-
-  after((done) => {
-    // Clean up: Delete the test user after running the tests
-    const deleteQuery = 'DELETE FROM Users WHERE id = ?';
-    connection.query(deleteQuery, [testUserId], (error, result) => {
-      if (error) {
-        console.error('Error deleting test user:', error);
-        done(error);
-      } else {
-        done();
-      }
-    });
-  });
 
   beforeEach(() => {
     // Create stubs for the SurveyController functions
@@ -63,7 +32,7 @@ describe('Survey Routes', () => {
       addInitialSurveyStub.resolves();
 
       const surveyData = {
-        user_id: testUserId,
+        user_id: 1, // provide a user_id value
         date_of_birth: '1990-01-01',
         gender: 'male',
         height: '180',
@@ -89,7 +58,7 @@ describe('Survey Routes', () => {
       addCoachSurveyStub.resolves();
 
       const surveyData = {
-        user_id: testUserId,
+        user_id: 1, // provide a user_id value
         experience: 5,
         specializations: 'Losing Weight',
         city: 'Test City',
@@ -114,7 +83,7 @@ describe('Survey Routes', () => {
       addDailySurveyStub.resolves();
 
       const surveyData = {
-        user_id: testUserId,
+        user_id: 1, // provide a user_id value
         calories: 2000,
         waterIntake: 8,
         weight: 70,

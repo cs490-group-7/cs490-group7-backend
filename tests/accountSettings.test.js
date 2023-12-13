@@ -18,16 +18,19 @@ const testUser = {
 };
 
 describe('Account Settings Routes', () => {
-  let queryStub;
+  let getAccountInfoStub;
+  let updateAccountInfoStub;
 
   // Before each test, stub the database query function
   beforeEach(() => {
-    queryStub = sinon.stub(AccountController, 'getAccountInfo');
+    getAccountInfoStub = sinon.stub(AccountController, 'getAccountInfo');
+    updateAccountInfoStub = sinon.stub(AccountController, 'updateAccountInfo');
   });
 
   // After each test, restore the stub
   afterEach(() => {
-    queryStub.restore();
+    getAccountInfoStub.restore();
+    updateAccountInfoStub.restore();
   });
 
   it('should get account information', (done) => {
@@ -37,7 +40,7 @@ describe('Account Settings Routes', () => {
       first_name: testUser.first_name,
       last_name: testUser.last_name,
     };
-    queryStub.withArgs(testUser.userId).resolves(mockAccountInfo);
+    getAccountInfoStub.withArgs(testUser.userId).resolves(mockAccountInfo);
 
     chai.request(app)
       .post('/api/account/get-account-info')
@@ -52,7 +55,8 @@ describe('Account Settings Routes', () => {
 
   it('should update account information', (done) => {
     // Stub the database function to return a success message
-    const updateStub = sinon.stub(AccountController, 'updateAccountInfo').resolves({ message: 'Account information updated successfully' });
+    const updateStubResult = { message: 'Account information updated successfully' };
+    updateAccountInfoStub.withArgs(sinon.match.any).resolves(updateStubResult);
 
     const updatedUserData = {
       first_name: 'UpdatedFirstName',
@@ -69,13 +73,9 @@ describe('Account Settings Routes', () => {
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('message').equal('Account information updated successfully');
-        expect(updateStub.calledWith(updatedUserData)).to.be.true;
+        expect(updateAccountInfoStub.calledWith(sinon.match(updatedUserData))).to.be.true;
 
-        // Restore the stub
-        updateStub.restore();
         done();
       });
   });
-
- 
 });
