@@ -428,13 +428,13 @@ CREATE TABLE DailySurvey (
 
 CREATE TABLE CoachRemoval (
     removal_id INT AUTO_INCREMENT NOT NULL,
-    user_id INT NOT NULL,
+    client_id INT NOT NULL,
     coach_id INT NOT NULL,
     reason TEXT,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (removal_id),
-    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE,
     FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE
 );
