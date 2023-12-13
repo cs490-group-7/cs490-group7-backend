@@ -32,14 +32,42 @@ router.post('/get-current-clients', (req, res) => {
 
 router.post('/get-current-coach', (req, res) => {
   const clientId = req.body.userId;
-  const query = `select coach_id, client_id, first_name, last_name, specializations, experience, city, state, price from Coach_Request
+  const query = `select coach_id, client_id, first_name, last_name, specializations, experience, city, state, price, accepted, pending from Coach_Request
       inner join Users on Coach_Request.coach_id = Users.id
       inner join CoachInitialSurvey on Coach_Request.coach_id = CoachInitialSurvey.user_id
-      where Coach_Request.client_id = ? AND Coach_Request.accepted = TRUE;`
+      where Coach_Request.client_id = ?;`
   db_conn.query(query, [clientId], (error, result) => {
       if(error){
           console.error(error)
           return res.status(500).json({ message: 'Error retrieving current coach' });
+      }
+      res.status(200).json(result[0]);
+  });
+})
+
+router.post('/remove-coach', (req, res) => {
+  const clientId = req.body.userId;
+  const query = `delete from Coach_Request
+      where client_id = ?;`
+  db_conn.query(query, [clientId], (error, result) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error removing coach' });
+      }
+      res.status(200).json(result);
+  });
+})
+
+router.post('/removal-reason', (req, res) => {
+  const clientId = req.body.userId;
+  const coachId = req.body.coachId;
+  const reason = req.body.reason;
+  const query = `insert into CoachRemoval (client_id, coach_id, reason)
+      values (?, ?, ?);`
+  db_conn.query(query, [clientId, coachId, reason], (error, result) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error removing coach' });
       }
       res.status(200).json(result);
   });
