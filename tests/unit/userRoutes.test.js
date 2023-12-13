@@ -26,13 +26,13 @@ describe('User Routes', () => {
   it('should register a new user', (done) => {
     // Stub the function to return mock data
     registerUserStub.resolves({ message: 'User registered successfully', ident: 1 });
-
+  
     chai.request(app)
       .post('/api/users/register')
       .send({
         firstName: 'Joe',
         lastName: 'Doe',
-        email: 'joe.doe@example.com',
+        email: 'unique-email@example.com', 
         password: '#Password123',
         phone: '1234567890',
         isCoach: false
