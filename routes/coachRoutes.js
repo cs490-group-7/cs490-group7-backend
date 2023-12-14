@@ -15,6 +15,48 @@ router.post('/check-approval-status', (req, res) => {
         res.status(200).json({ isPendingApproval });
     });
 });
+// Endpoint to get current clients for a coach
+router.post('/get-current-clients', (req, res) => {
+  const coachId = req.body.userId;
+  const query = `select coach_id, client_id, first_name, last_name from Coach_Request
+      inner join Users on Coach_Request.client_id = Users.id
+      where Coach_Request.coach_id = ? AND Coach_Request.accepted = TRUE;`
+  db_conn.query(query, [coachId], (error, result) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error retrieving current clients' });
+      }
+      res.status(200).json(result);
+  });
+})
+
+// Endpoint to retrieve the progress data for client.
+router.post('/client-progress', (req, res) => {
+  const clientId = req.body.clientId;
+  const query = 'SELECT * FROM DailySurvey WHERE user_id = ? ORDER BY date DESC';
+
+  db_conn.query(query, [clientId], (error, results) => {
+      if (error) {
+          console.error('Error fetching client progress:', error);
+          return res.status(500).json({ message: 'Error fetching client progress' });
+      }
+      res.status(200).json(results);
+  });
+});
+
+router.post('/get-current-clients', (req, res) => {
+  const coachId = req.body.userId;
+  const query = `select coach_id, client_id, first_name, last_name from Coach_Request
+      inner join Users on Coach_Request.client_id = Users.id
+      where Coach_Request.coach_id = ? AND Coach_Request.accepted = TRUE;`
+  db_conn.query(query, [coachId], (error, result) => {
+      if(error){
+          console.error(error)
+          return res.status(500).json({ message: 'Error retrieving current clients' });
+      }
+      res.status(200).json(result);
+  });
+})
 
 // Route for coach lookup, fetching only approved coaches
 router.post('/coach-lookup', (req, res) => {
