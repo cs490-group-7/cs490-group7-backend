@@ -116,14 +116,15 @@ router.post('/get-coach-requests', async (req, res) => {
   }
 });
 
-router.post('/update-coach-approval', async (req, res) => {
-  const { coachId, isApproved } = req.body;
+router.post('/handle-request', async (req, res) => {
+  const { coachId, clientId, isAccepted } = req.body;
 
   try {
-    const result = await UserController.updateCoachApprovalStatus(coachId, isApproved);
+    const result = await UserController.handleRequest(coachId, clientId, isAccepted);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Error updating coach request' });
   }
 });
 

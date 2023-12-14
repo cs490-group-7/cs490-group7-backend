@@ -46,4 +46,17 @@ router.post('/update-goal-info', async (req, res) => {
   }
 });
 
+router.post('/workout-progress', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    // Call the function in progressController to get workout progress
+    const workoutProgress = await ProgressController.getWorkoutProgress(userId);
+    res.json(workoutProgress);
+  } catch (error) {
+    console.error('Workout progress retrieval error:', error);
+    res.status(500).json({ message: 'Error retrieving workout progress' });
+  }
+});
+
 module.exports = router;

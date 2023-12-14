@@ -71,6 +71,30 @@ const progressController = {
       throw new Error('Error updating goal info');
     }
   },
+
+  getWorkoutProgress: async (userId) => {
+    try {
+      // Check if user exists
+      const checkUserQuery = 'SELECT id FROM Users WHERE id=?';
+      const userExists = await queryAsync(checkUserQuery, [userId]);
+
+      if (userExists.length === 0) {
+        throw new Error(`User does not exist: ${userId}`);
+      }
+
+      // Get the logs for the user
+      const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps)*W.set_count AS listed, SUM(SE.reps) AS completed ' +
+        'FROM SessionExercise as SE, WorkoutSession as WS, Workout_Exercise as WE, Workout AS W ' +
+        'WHERE WS.workout_id=W.workout_id AND SE.workout_id=WE.workout_id AND SE.exercise_order=WE.exercise_order AND WS.session_id=SE.session_id AND WS.user_id=? ' +
+        'GROUP BY SE.session_id;';
+
+      const sessions = await queryAsync(logQuery, [userId]);
+      return sessions;
+    } catch (error) {
+      console.error('Workout progress retrieval error:', error);
+      throw new Error('Error retrieving workout progress');
+    }
+  },
 };
 
 module.exports = progressController;
