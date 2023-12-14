@@ -72,7 +72,7 @@ router.post('/update-goal-info', (req, res) => {
 })
 
 router.post('/workout-progress', async (req, res) => {
-    const { userId, sinceDate } = req.body;
+    const { userId } = req.body;
 
     try {
         // Check if user exists
@@ -88,12 +88,12 @@ router.post('/workout-progress', async (req, res) => {
         }
 
         // Get the logs for the user
-        const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps) AS listed, SUM(SE.reps) AS completed ' +
-            'FROM fitness_app.SessionExercise as SE, fitness_app.WorkoutSession as WS, fitness_app.Workout_Exercise as WE '+
-            'WHERE SE.workout_id=WE.workout_id AND WS.session_id=SE.session_id AND WS.user_id=? AND WS.session_date>? ' +
+        const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps)*W.set_count AS listed, SUM(SE.reps) AS completed ' +
+            'FROM SessionExercise as SE, WorkoutSession as WS, Workout_Exercise as WE, Workout AS W ' +
+            'WHERE WS.workout_id=W.workout_id AND SE.workout_id=WE.workout_id AND SE.exercise_order=WE.exercise_order AND WS.session_id=SE.session_id AND WS.user_id=? ' +
             'GROUP BY SE.session_id;';
         const sessions = await new Promise((resolve, reject) => {
-            db_conn.query(logQuery, [userId, sinceDate], (error, results, fields) => {
+            db_conn.query(logQuery, [userId], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
