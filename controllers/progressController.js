@@ -1,5 +1,17 @@
 const db_conn = require('../db_connection');
 
+const queryAsync = (sql, values) => {
+  return new Promise((resolve, reject) => {
+    db_conn.query(sql, values, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+};
+
 const progressController = {
   getProgressData: async (userId) => {
     try {

@@ -318,15 +318,31 @@ CREATE TABLE WorkoutCalendar(
 );
 
 CREATE TABLE WorkoutSession(
+    session_id int NOT NULL AUTO_INCREMENT,
     workout_id int NOT NULL,
     user_id int NOT NULL,
     session_date date NOT NULL,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (workout_id, user_id, session_date),
+    PRIMARY KEY (session_id),
     FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE SessionExercise(
+    session_id int NOT NULL,
+    workout_id int NOT NULL,
+    exercise_id int NOT NULL,
+    exercise_order int NOT NULL,
+    reps int,
+
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (session_id, workout_id, exercise_id),
+    FOREIGN KEY (session_id) REFERENCES WorkoutSession (session_id) ON DELETE CASCADE,
+    FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
+    FOREIGN KEY (exercise_id) REFERENCES ExerciseBank (exercise_id)
 );
 
 CREATE TABLE Chat(
@@ -424,4 +440,17 @@ CREATE TABLE DailySurvey (
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, date),
     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE CoachRemoval (
+    removal_id INT AUTO_INCREMENT NOT NULL,
+    client_id INT NOT NULL,
+    coach_id INT NOT NULL,
+    reason TEXT,
+
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (removal_id),
+    FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE
 );
