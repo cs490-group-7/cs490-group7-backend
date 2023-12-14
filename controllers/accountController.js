@@ -1,4 +1,5 @@
 const db_conn = require('../db_connection');
+const bcrypt = require('bcrypt');
 
 const queryAsync = (sql, values) => {
   return new Promise((resolve, reject) => {
@@ -46,6 +47,41 @@ const AccountController = {
     } catch (error) {
       console.error('Error updating account information:', error);
       throw new Error('Error updating account information');
+    }
+  },
+
+  changePassword: async (currentPassword, newPassword, userId) => {
+    try {
+      const getQuery = 'SELECT * FROM Users WHERE id = ?';
+      const results = await queryAsync(getQuery, [userId]);
+
+      const validPassword = await bcrypt.compare(currentPassword, results[0].password);
+      if (!validPassword) {
+        throw new Error('Current password is incorrect');
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      const updateQuery = 'UPDATE Users SET password = ? WHERE id = ?';
+      await db_conn.query(updateQuery, [hashedPassword, userId]);
+
+      return 'Password updated successfully';
+    } catch (error) {
+      console.error('Error changing password:', error);
+      throw new Error('Error changing password');
+    }
+  },
+
+  deleteAccount: async (userId) => {
+    try {
+      const query = 'DELETE FROM Users WHERE id = ?';
+      await db_conn.query(query, [userId]);
+
+      return 'Account deleted successfully';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      throw new Error('Error deleting account');
     }
   },
 };

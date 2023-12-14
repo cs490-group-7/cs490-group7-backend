@@ -26,7 +26,54 @@ const coachController = {
       throw new Error('Error retrieving current clients');
     }
   },
+  
+  getCurrentCoach: async (clientId) => {
+    try {
+      const query = `SELECT coach_id, client_id, first_name, last_name, specializations, experience, city, state, price, accepted, pending 
+        FROM Coach_Request
+        INNER JOIN Users ON Coach_Request.coach_id = Users.id
+        INNER JOIN CoachInitialSurvey ON Coach_Request.coach_id = CoachInitialSurvey.user_id
+        WHERE Coach_Request.client_id = ?;`;
+      const results = await queryAsync(query, [clientId]);
+      return results[0] || null;
+    } catch (error) {
+      console.error('Error retrieving current coach:', error);
+      throw new Error('Error retrieving current coach');
+    }
+  },
 
+  removeCoach: async (clientId) => {
+    try {
+      const query = `DELETE FROM Coach_Request WHERE client_id = ?;`;
+      await queryAsync(query, [clientId]);
+      return { message: 'Coach removed successfully' };
+    } catch (error) {
+      console.error('Error removing coach:', error);
+      throw new Error('Error removing coach');
+    }
+  },
+
+  addRemovalReason: async (clientId, coachId, reason) => {
+    try {
+      const query = `INSERT INTO CoachRemoval (client_id, coach_id, reason) VALUES (?, ?, ?);`;
+      await queryAsync(query, [clientId, coachId, reason]);
+      return { message: 'Removal reason added successfully' };
+    } catch (error) {
+      console.error('Error adding removal reason:', error);
+      throw new Error('Error adding removal reason');
+    }
+  },
+
+  getClientProgress: async (clientId) => {
+    try {
+      const query = 'SELECT * FROM DailySurvey WHERE user_id = ? ORDER BY date DESC';
+      const results = await queryAsync(query, [clientId]);
+      return results || [];
+    } catch (error) {
+      console.error('Error fetching client progress:', error);
+      throw new Error('Error fetching client progress');
+    }
+  },
 
   coachLookup: async (filters) => {
     try {

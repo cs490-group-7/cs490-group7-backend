@@ -22,6 +22,48 @@ router.post('/get-current-clients', async (req, res) => {
   }
 });
 
+router.post('/get-current-coach', async (req, res) => {
+  try {
+    const clientId = req.body.userId;
+    const result = await CoachController.getCurrentCoach(clientId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/remove-coach', async (req, res) => {
+  try {
+    const clientId = req.body.userId;
+    const result = await CoachController.removeCoach(clientId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/removal-reason', async (req, res) => {
+  try {
+    const clientId = req.body.userId;
+    const coachId = req.body.coachId;
+    const reason = req.body.reason;
+    const result = await CoachController.addRemovalReason(clientId, coachId, reason);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/client-progress', async (req, res) => {
+  try {
+    const clientId = req.body.clientId;
+    const result = await CoachController.getClientProgress(clientId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.post('/coach-lookup', async (req, res) => {
   try {
     const filters = req.body;
