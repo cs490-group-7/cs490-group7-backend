@@ -1,29 +1,6 @@
 const db_conn = require('../db_connection');
 
 const dataController = {
-  getDashboardMockData: async () => {
-    try {
-      return {
-        "dailyFilled": false,
-        "calories": null,
-        "waterIntake": null,
-        "weight": null,
-        "caloriesError": null,
-        "waterIntakeError": null,
-        "weightError": null,
-        "goalMessage": "Lose 30 pounds",
-        "goalBaseline": 130,
-        "goalTarget": 100,
-        "goalCurrent": 115,
-        "progress": 0.5,
-        "workoutName": "Chest and Triceps Day",
-        "workoutCompletion": false,
-      };
-    } catch (error) {
-      console.error('Error getting mock data:', error);
-      throw new Error('Error getting mock data');
-    }
-  },
 
   getDashboardData: async (userId) => {
     try {
