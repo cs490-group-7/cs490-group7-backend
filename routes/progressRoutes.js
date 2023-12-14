@@ -71,4 +71,39 @@ router.post('/update-goal-info', (req, res) => {
     });
 })
 
+router.post('/workout-progress', async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        // Check if user exists
+        const checkUserQuery = 'SELECT id FROM Users WHERE id=?';
+        const userExists = await new Promise((resolve, reject) => {
+            db_conn.query(checkUserQuery, [userId], (error, results) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        if (userExists.length === 0) {
+            return res.status(400).json({ message: "User does not exist: " + userId.toString() });
+        }
+
+        // Get the logs for the user
+        const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps)*W.set_count AS listed, SUM(SE.reps) AS completed ' +
+            'FROM SessionExercise as SE, WorkoutSession as WS, Workout_Exercise as WE, Workout AS W ' +
+            'WHERE WS.workout_id=W.workout_id AND SE.workout_id=WE.workout_id AND SE.exercise_order=WE.exercise_order AND WS.session_id=SE.session_id AND WS.user_id=? ' +
+            'GROUP BY SE.session_id;';
+        const sessions = await new Promise((resolve, reject) => {
+            db_conn.query(logQuery, [userId], (error, results, fields) => {
+                if (error) reject(error);
+                else resolve(results);
+            });
+        });
+        
+        res.json(sessions);
+    } catch (error) {
+        console.error('Log retrieval error:', error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 module.exports = router;
