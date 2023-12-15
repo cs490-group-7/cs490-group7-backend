@@ -80,7 +80,7 @@ router.post('/workout-details', async (req, res) => {
     const { workoutId } = req.body;
 
     try {
-        const workoutQuery = 'SELECT workout_name, set_count, description FROM Workout WHERE workout_id=?';
+        const workoutQuery = 'SELECT workout_name, description FROM Workout WHERE workout_id=?';
   
         const workoutResults = await new Promise((resolve, reject) => {
             db_conn.query(workoutQuery, [workoutId], (error, results, fields) => {
@@ -89,7 +89,7 @@ router.post('/workout-details', async (req, res) => {
             });
         });
 
-        const exerciseQuery = 'SELECT E.exercise_id, E.exercise_name, WE.reps FROM Workout_Exercise as WE, ExerciseBank as E WHERE WE.exercise_id=E.exercise_id AND workout_id=?';
+        const exerciseQuery = 'SELECT E.exercise_id, E.exercise_name, WE.set_count, WE.reps FROM Workout_Exercise as WE, ExerciseBank as E WHERE WE.exercise_id=E.exercise_id AND workout_id=?';
 
         const exerciseResults = await new Promise((resolve, reject) => {
             db_conn.query(exerciseQuery, [workoutId], (error, results, fields) => {
@@ -109,11 +109,11 @@ router.post('/workout-details', async (req, res) => {
 });
 
 router.post('/create-workout', async (req, res) => {
-    const { creatorId, workoutName, setCount, description, exercises } = req.body;
+    const { creatorId, workoutName, description, exercises } = req.body;
   
     try {
         await new Promise((resolve, reject) => {
-            db_conn.query('INSERT INTO Workout (workout_name, creator_id, set_count, description) VALUES (?, ?, ?, ?)', [workoutName, creatorId, setCount, description], (error, results, fields) => {
+            db_conn.query('INSERT INTO Workout (workout_name, creator_id, description) VALUES (?, ?, ?)', [workoutName, creatorId, description], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
@@ -126,7 +126,7 @@ router.post('/create-workout', async (req, res) => {
         });
         exercises.map(async (exercise, i) => {
             await new Promise((resolve, reject) => {
-                db_conn.query('INSERT INTO Workout_Exercise (workout_id, exercise_id, exercise_order, reps) VALUES (?, ?, ?, ?)', [results[0].workout_id, exercise.exercise_id, i, exercise.rep_count], (error, results, fields) => {
+                db_conn.query('INSERT INTO Workout_Exercise (workout_id, exercise_id, exercise_order, set_count, reps) VALUES (?, ?, ?, ?, ?)', [results[0].workout_id, exercise.exercise_id, i, exercise.set_count, exercise.rep_count], (error, results, fields) => {
                     if (error) reject(error);
                     else resolve(results);
                 });
@@ -140,7 +140,7 @@ router.post('/create-workout', async (req, res) => {
 });
 
 router.post('/edit-workout', async (req, res) => {
-    const { workoutId, creatorId, workoutName, setCount, description, exercises } = req.body;
+    const { workoutId, creatorId, workoutName, description, exercises } = req.body;
   
     try {
         const deleteQuery = 'DELETE FROM Workout_Exercise WHERE workout_id=?';
@@ -153,7 +153,7 @@ router.post('/edit-workout', async (req, res) => {
         });
 
         await new Promise((resolve, reject) => {
-            db_conn.query('UPDATE Workout SET workout_name=?, creator_id=?, set_count=?, description=? WHERE workout_id=?', [workoutName, creatorId, setCount, description, workoutId], (error, results, fields) => {
+            db_conn.query('UPDATE Workout SET workout_name=?, creator_id=?, description=? WHERE workout_id=?', [workoutName, creatorId, description, workoutId], (error, results, fields) => {
                 if (error) reject(error);
                 else resolve(results);
             });
@@ -161,14 +161,14 @@ router.post('/edit-workout', async (req, res) => {
 
         exercises.map(async (exercise, i) => {
             await new Promise((resolve, reject) => {
-                db_conn.query('INSERT INTO Workout_Exercise (workout_id, exercise_id, exercise_order, reps) VALUES (?, ?, ?, ?)', [workoutId, exercise.exercise_id, i, exercise.rep_count], (error, results, fields) => {
+                db_conn.query('INSERT INTO Workout_Exercise (workout_id, exercise_id, exercise_order, set_count, reps) VALUES (?, ?, ?, ?, ?)', [workoutId, exercise.exercise_id, i, exercise.set_count, exercise.rep_count], (error, results, fields) => {
                     if (error) reject(error);
                     else resolve(results);
                 });
             });
         });
     } catch (error) {
-      console.error('Create workout error:', error);
+      console.error('Edit workout error:', error);
   
       res.status(500).json({ message: "Server error" });
     }
@@ -372,7 +372,7 @@ router.post('/log-session', async (req, res) => {
         // Log the session's exercises
         exercises.map(async (exercise, i) => {
             await new Promise((resolve, reject) => {
-                db_conn.query('INSERT INTO SessionExercise (session_id, workout_id, exercise_id, exercise_order, reps) VALUES (?, ?, ?, ?, ?)', [session[0].session_id, workoutId, exercise.exercise_id, i, exercise.total], (error, results, fields) => {
+                db_conn.query('INSERT INTO SessionExercise (session_id, workout_id, exercise_id, exercise_order, set_count, reps) VALUES (?, ?, ?, ?, ?, ?)', [session[0].session_id, workoutId, exercise.exercise_id, i, exercise.set_total, exercise.rep_total], (error, results, fields) => {
                     if (error) reject(error);
                     else resolve(results);
                 });

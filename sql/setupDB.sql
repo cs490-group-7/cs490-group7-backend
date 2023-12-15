@@ -283,7 +283,6 @@ CREATE TABLE Workout(
     workout_id int NOT NULL AUTO_INCREMENT,
     creator_id int NOT NULL,
     workout_name varchar(100) NOT NULL,
-    set_count int,
     description text,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -295,6 +294,7 @@ CREATE TABLE Workout_Exercise(
     workout_id int NOT NULL,
     exercise_id int NOT NULL,
     exercise_order int NOT NULL,
+    set_count int,
     reps int,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -335,6 +335,7 @@ CREATE TABLE SessionExercise(
     workout_id int NOT NULL,
     exercise_id int NOT NULL,
     exercise_order int NOT NULL,
+    set_count int,
     reps int,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
