@@ -454,3 +454,9 @@ CREATE TABLE CoachRemoval (
     FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE,
     FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE
 );
+
+CREATE TABLE AccountDeletionReasons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reason TEXT NOT NULL,
+    deletion_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
