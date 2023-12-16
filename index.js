@@ -28,7 +28,7 @@ app.get('/health/check', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/surveys', surveyRoutes);
 app.use('/api/data', dataRoutes);
-app.use('/api/data', chatRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/workout', workoutRoutes);
 app.use('/api/progress', progressRoutes)
 app.use('/api/account', accountSettings)

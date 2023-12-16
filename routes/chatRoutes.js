@@ -40,4 +40,32 @@ router.post('/send-message', (req, res) => {
     });
 });
 
+router.post('/get-messages', (req, res) => {
+    const { coach_id, client_id } = req.body;
+
+    // Get the chat_id
+    const getChatIdQuery = 'SELECT chat_id FROM Chat WHERE coach_id = ? AND client_id = ?';
+    db_conn.query(getChatIdQuery, [coach_id, client_id], (error, results) => {
+        if (error) {
+            console.error('Error getting chat_id:', error);
+            return res.status(500).json({ error: 'An error occurred while getting the chat_id.' });
+        } else if (results.length === 0) {
+            return res.status(404).json({ error: 'No chat found between the specified coach and client.' });
+        } else {
+            const chat_id = results[0].chat_id;
+
+            // Get the messages
+            const getMessagesQuery = 'SELECT from_coach, message FROM Message WHERE chat_id = ? ORDER BY sent_at';
+            db_conn.query(getMessagesQuery, [chat_id], (error, results) => {
+                if (error) {
+                    console.error('Error getting messages:', error);
+                    return res.status(500).json({ error: 'An error occurred while getting the messages.' });
+                } else {
+                    return res.status(200).json(results);
+                }
+            });
+        }
+    });
+});
+
 module.exports = router;
