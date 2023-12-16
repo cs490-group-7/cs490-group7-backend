@@ -10,7 +10,7 @@ router.post('/dashboard-data', async (req, res) => {
                     'THEN (SELECT weight FROM DailySurvey WHERE user_id=? ORDER BY date DESC LIMIT 1) '+
                     'ELSE (SELECT weight FROM ClientInitialSurvey WHERE user_id=?) END) AS currentWeight, ('+
                     'SELECT workout_name FROM WorkoutCalendar, Workout WHERE user_id=? AND WorkoutCalendar.workout_id = Workout.workout_id '+
-                    'AND WEEKDAY(CURDATE()) = 6) AS workout_name '+ //Change 6 -> day_of_week
+                    'AND WEEKDAY(CURDATE()+1) = day_of_week) AS workout_name '+ //Change 6 -> day_of_week
                     'FROM ClientInitialSurvey';
       const results = await new Promise((resolve, reject) => {
           db_conn.query(query, [userId,userId,userId,userId], (error, results, fields) => {
