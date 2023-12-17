@@ -329,7 +329,7 @@ router.post('/log-session', async (req, res) => {
         }
 
         // Check if workout exists
-        const checkWorkoutQuery = 'SELECT workout_id FROM Workout WHERE workout_id=? AND creator_id=?';
+        const checkWorkoutQuery = 'SELECT workout_id FROM Workout WHERE workout_id=? AND assignee_id=?';
         const workoutExists = await new Promise((resolve, reject) => {
             db_conn.query(checkWorkoutQuery, [workoutId, userId], (error, results) => {
                 if (error) reject(error);
