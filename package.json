@@ -25,6 +25,7 @@
     "mysql2": "^3.6.3",
     "sequelize": "^6.34.0",
     "sinon": "^17.0.1",
+    "socket.io": "^4.7.2",
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
