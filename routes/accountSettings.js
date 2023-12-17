@@ -34,9 +34,9 @@ router.post('/change-password', async (req, res) => {
 
 router.post('/delete-account', async (req, res) => {
   try {
-    const { userId } = req.body;
-    const message = await AccountController.deleteAccount(userId);
-    res.status(200).json({ message });
+    const { userId, reason } = req.body;
+    const result = await AccountController.deleteAccountWithReason(userId, reason);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

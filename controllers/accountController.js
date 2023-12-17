@@ -73,15 +73,26 @@ const AccountController = {
     }
   },
 
-  deleteAccount: async (userId) => {
+  deleteAccountWithReason: async (userId, reason) => {
     try {
-      const query = 'DELETE FROM Users WHERE id = ?';
-      await db_conn.query(query, [userId]);
+      await db_conn.beginTransaction();
 
-      return 'Account deleted successfully';
+      // Insert deletion reason
+      const insertReasonQuery = 'INSERT INTO AccountDeletionReasons (reason) VALUES (?)';
+      await queryAsync(insertReasonQuery, [reason]);
+
+      // Delete the user account
+      const deleteQuery = 'DELETE FROM Users WHERE id = ?';
+      await queryAsync(deleteQuery, [userId]);
+
+      // Commit the transaction
+      await db_conn.commit();
+
+      return { message: 'Account deleted successfully' };
     } catch (error) {
-      console.error('Error deleting account:', error);
-      throw new Error('Error deleting account');
+      console.error('Error during account deletion:', error);
+      await db_conn.rollback();
+      throw new Error('Error during account deletion');
     }
   },
 };
