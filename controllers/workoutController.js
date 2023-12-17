@@ -174,10 +174,22 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
       throw new Error("User does not exist: " + assigneeId.toString());
     }
 
+  // Check if creator exists
+   const checkCreatorQuery = 'SELECT id FROM Users WHERE id=?';
+   const creatorExists = await new Promise((resolve, reject) => {
+      db_conn.query(checkCreatorQuery, [creatorId], (error, results) => {
+         if (error) reject(error);
+         else resolve(results);
+       });
+    });
+ if (creatorExists.length === 0) {
+     return res.status(400).json({ message: "Creator does not exist: " + creatorId.toString() });
+ }
+
     // Check if workout exists
-    const checkWorkoutQuery = 'SELECT workout_id FROM Workout WHERE workout_id=? AND creator_id=?';
+    const checkWorkoutQuery = 'SELECT workout_id FROM Workout WHERE workout_id=? AND assignee_id=?';
     const workoutExists = await new Promise((resolve, reject) => {
-      db_conn.query(checkWorkoutQuery, [workoutId, creatorId], (error, results) => {
+      db_conn.query(checkWorkoutQuery, [workoutId, assigneeId], (error, results) => {
         if (error) reject(error);
         else resolve(results);
       });
@@ -189,7 +201,7 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
     // Check if assignment already exists
     const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND assignee_id=? AND day_of_week=?';
     const assignmentExists = await new Promise((resolve, reject) => {
-      db_conn.query(checkAssignmentQuery, [workoutId, creatorId, dayOfWeek], (error, results) => {
+      db_conn.query(checkAssignmentQuery, [workoutId, assigneeId, dayOfWeek], (error, results) => {
         if (error) reject(error);
         else resolve(results);
       });
@@ -199,9 +211,9 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
     }
 
     // Create the assignment
-    await db_conn.query('INSERT INTO WorkoutCalendar (workout_id, assignee_id, day_of_week) VALUES (?, ?, ?)', [workoutId, creatorId, dayOfWeek]);
+    await db_conn.query('INSERT INTO WorkoutCalendar (workout_id, assignee_id, creator_id, day_of_week) VALUES (?, ?, ?, ?)', [workoutId, assigneeId, creatorId, dayOfWeek]);
     await new Promise((resolve, reject) => {
-      db_conn.query(checkAssignmentQuery, [workoutId, creatorId, dayOfWeek], (error, results) => {
+      db_conn.query(checkAssignmentQuery, [workoutId, assigneeId, creatorId, dayOfWeek], (error, results) => {
         if (error) reject(error);
         else resolve(results);
       });
