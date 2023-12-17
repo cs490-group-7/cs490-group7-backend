@@ -56,19 +56,36 @@ router.post('/current-weight', async (req, res) => {
 
 router.post('/update-goal-info', (req, res) => {
     const inputData = req.body;
-    const values = [
-        inputData.weightGoal,
-        inputData.weightGoalValue,
-        inputData.userId
-    ]
-    const query = 'UPDATE ClientInitialSurvey SET weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;'
-    db_conn.query(query, values, (error, result) => {
-        if(error){
-            console.error(error)
-            return res.status(500).json({ message: 'Error updating goal' });
-        }
-        res.status(200).json({ message: 'Goal updated successfully' });
-    });
+    if (inputData.createNew === true){
+        const values = [
+            inputData.currentWeight,
+            inputData.weightGoal,
+            inputData.weightGoalValue,
+            inputData.userId
+        ]
+        const query = 'UPDATE ClientInitialSurvey SET weight = ?, weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;'
+        db_conn.query(query, values, (error, result) => {
+            if(error){
+                console.error(error)
+                return res.status(500).json({ message: 'Error creating goal' });
+            }
+            res.status(200).json({ message: 'New goal created successfully' });
+        });
+    }
+    else{
+        const values = [
+            inputData.weightGoalValue,
+            inputData.userId
+        ]
+        const query = 'UPDATE ClientInitialSurvey SET weightGoalValue = ? WHERE user_id = ?;'
+        db_conn.query(query, values, (error, result) => {
+            if(error){
+                console.error(error)
+                return res.status(500).json({ message: 'Error updating goal' });
+            }
+            res.status(200).json({ message: 'Goal updated successfully' });
+        });
+    }
 })
 
 router.post('/workout-progress', async (req, res) => {
