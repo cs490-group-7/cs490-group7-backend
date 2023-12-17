@@ -187,7 +187,7 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
     }
 
     // Check if assignment already exists
-    const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND user_id=? AND day_of_week=?';
+    const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND assignee_id=? AND day_of_week=?';
     const assignmentExists = await new Promise((resolve, reject) => {
       db_conn.query(checkAssignmentQuery, [workoutId, creatorId, dayOfWeek], (error, results) => {
         if (error) reject(error);
@@ -199,7 +199,7 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
     }
 
     // Create the assignment
-    await db_conn.query('INSERT INTO WorkoutCalendar (workout_id, user_id, day_of_week) VALUES (?, ?, ?)', [workoutId, creatorId, dayOfWeek]);
+    await db_conn.query('INSERT INTO WorkoutCalendar (workout_id, assignee_id, day_of_week) VALUES (?, ?, ?)', [workoutId, creatorId, dayOfWeek]);
     await new Promise((resolve, reject) => {
       db_conn.query(checkAssignmentQuery, [workoutId, creatorId, dayOfWeek], (error, results) => {
         if (error) reject(error);
@@ -215,7 +215,7 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
 
 getAssignments: async (userId) => {
   try {
-    const assignmentQuery = 'SELECT W.workout_id, W.workout_name, WC.day_of_week FROM WorkoutCalendar AS WC, Workout AS W WHERE WC.workout_id=W.workout_id AND WC.user_id=? ORDER BY W.workout_name ASC';
+    const assignmentQuery = 'SELECT W.workout_id, W.workout_name, WC.day_of_week FROM WorkoutCalendar AS WC, Workout AS W WHERE WC.workout_id=W.workout_id AND WC.assignee_id=? ORDER BY W.workout_name ASC';
 
     const results = await new Promise((resolve, reject) => {
       db_conn.query(assignmentQuery, [userId], (error, results, fields) => {
@@ -261,7 +261,7 @@ getTodaysLogs: async (userId) => {
 
 unassignWorkout: async (workoutId, userId, dayOfWeek) => {
   try {
-    const assignmentQuery = 'DELETE FROM WorkoutCalendar WHERE workout_id=? AND user_id=? AND day_of_week=?';
+    const assignmentQuery = 'DELETE FROM WorkoutCalendar WHERE workout_id=? AND assignee_id=? AND day_of_week=?';
 
     const results = await new Promise((resolve, reject) => {
       db_conn.query(assignmentQuery, [workoutId, userId, dayOfWeek], (error, results, fields) => {
@@ -303,7 +303,7 @@ logSession: async (userId, workoutId, sessionDate, dayOfWeek) => {
     }
 
     // Check if assignment exists
-    const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND user_id=? AND day_of_week=?';
+    const checkAssignmentQuery = 'SELECT workout_id FROM WorkoutCalendar WHERE workout_id=? AND assignee_id=? AND day_of_week=?';
     const assignmentExists = await new Promise((resolve, reject) => {
       db_conn.query(checkAssignmentQuery, [workoutId, userId, dayOfWeek], (error, results) => {
         if (error) reject(error);

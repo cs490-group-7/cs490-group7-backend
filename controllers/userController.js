@@ -20,7 +20,7 @@ const UserController = {
       // Hash the password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-
+ 
       // Insert user into the database
       const userType = isCoach ? 'Coach' : 'Client';
       await db_conn.query('INSERT INTO Users (first_name, last_name, email, password, user_type, phone) VALUES (?, ?, ?, ?, ?, ?)', [firstName, lastName, email, hashedPassword, userType, phone]);
