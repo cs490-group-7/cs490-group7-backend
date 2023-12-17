@@ -44,6 +44,7 @@ const AccountController = {
       await db_conn.query(query, values);
 
       return { message: 'Account information updated successfully' };
+      
     } catch (error) {
       console.error('Error updating account information:', error);
       throw new Error('Error updating account information');
