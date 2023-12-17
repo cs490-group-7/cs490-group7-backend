@@ -24,4 +24,8 @@ connection.connect((err) => {
   }
 });
 
+connection.on('error', (err) => {
+  console.error('MySQL connection error:', err);
+});
+
 module.exports = connection;

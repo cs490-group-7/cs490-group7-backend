@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=prod jest --testTimeout=5000 --forceExit",
+    "test": "mocha tests/**/*.test.js --exit",
     "dev": "set NODE_ENV=local&& nodemon index.js",
     "start": "set NODE_ENV=prod&& node index.js",
     "swagger": "node ./swagger.js"
@@ -24,12 +24,17 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.3",
     "sequelize": "^6.34.0",
+    "sinon": "^17.0.1",
     "socket.io": "^4.7.2",
     "supertest": "^6.3.3",
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
+    "chai": "^4.3.10",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
+    "supertest": "^6.3.3",
     "swagger-autogen": "^2.23.7"
   }
 }
