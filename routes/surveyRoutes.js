@@ -14,7 +14,18 @@ router.post('/initial-survey', (req, res) => {
       surveyData.weightGoal,
       surveyData.weightGoalValue
     ];
-
+    if (surveyData.weightGoal !== "Maintain" && surveyData.weightGoalValue === surveyData.weight){
+        return res.status(400).json({ message: "Please use the \"Maintain\" weight goal if you want to keep the same weight" });
+    }
+    else if (surveyData.weightGoal === "Lose" && surveyData.weightGoalValue > surveyData.weight){
+        return res.status(400).json({ message: "Lose weight goal cannot be larger than current weight" });
+    }
+    else if (surveyData.weightGoal === "Gain" && surveyData.weightGoalValue < surveyData.weight){
+        return res.status(400).json({ message: "Gain weight goal cannot be smaller than current weight" });
+    }
+    else if (surveyData.weightGoal === "Maintain" && surveyData.weightGoalValue !== surveyData.weight){
+        return res.status(400).json({ message: "Maintain weight goal must be equal to current weight" });
+    }
     connection.query(query, values, (error, result) => {
         if(error){
             console.error(error)
