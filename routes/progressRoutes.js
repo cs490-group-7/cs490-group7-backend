@@ -60,3 +60,4 @@ router.post('/workout-progress', async (req, res) => {
 });
 
 module.exports = router;
+
