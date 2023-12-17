@@ -23,6 +23,9 @@ router.post('/initial-survey', (req, res) => {
     else if (surveyData.weightGoal === "Gain" && surveyData.weightGoalValue < surveyData.weight){
         return res.status(400).json({ message: "Gain weight goal cannot be smaller than current weight" });
     }
+    else if (surveyData.weightGoal === "Maintain" && surveyData.weightGoalValue !== surveyData.weight){
+        return res.status(400).json({ message: "Maintain weight goal must be equal to current weight" });
+    }
     connection.query(query, values, (error, result) => {
         if(error){
             console.error(error)
