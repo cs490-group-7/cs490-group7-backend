@@ -1,3 +1,4 @@
+-- Active: 1702053943299@@127.0.0.1@3306@fitness_app
 DROP SCHEMA IF EXISTS fitness_app;
 CREATE SCHEMA fitness_app;
 USE fitness_app;
@@ -366,6 +367,7 @@ CREATE TABLE Message(
     chat_id int NOT NULL,
     from_coach boolean NOT NULL,
     message text,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
