@@ -52,9 +52,9 @@ router.post('/workout-details', async (req, res) => {
 
 // Create Workout
 router.post('/create-workout', async (req, res) => {
-  const { creatorId, workoutName, setCount, description, exercises } = req.body;
+  const { assigneeId, creatorId, workoutName, description, exercises } = req.body;
   try {
-    await WorkoutController.createWorkout(creatorId, workoutName, setCount, description, exercises);
+    await WorkoutController.createWorkout(assigneeId, creatorId, workoutName, description, exercises);
     res.status(201).json({ message: 'Workout created successfully' });
   } catch (error) {
     console.error(error.message);
@@ -64,9 +64,9 @@ router.post('/create-workout', async (req, res) => {
 
 // Edit Workout
 router.post('/edit-workout', async (req, res) => {
-  const { workoutId, creatorId, workoutName, setCount, description, exercises } = req.body;
+  const { workoutId, assigneeId, workoutName, description, exercises } = req.body;
   try {
-    await WorkoutController.editWorkout(workoutId, creatorId, workoutName, setCount, description, exercises);
+    await WorkoutController.editWorkout(workoutId, assigneeId, workoutName, description, exercises);
     res.json({ message: 'Workout edited successfully' });
   } catch (error) {
     console.error(error.message);
@@ -76,16 +76,14 @@ router.post('/edit-workout', async (req, res) => {
 
 // Assign Workout
 router.post('/assign-workout', async (req, res) => {
-  const { userId, workoutId, dayOfWeek } = req.body;
+  const { assigneeId, creatorId, workoutId, dayOfWeek } = req.body;
   try {
-    await WorkoutController.assignWorkout(userId, workoutId, dayOfWeek);
+    await WorkoutController.assignWorkout(assigneeId, creatorId, workoutId, dayOfWeek);
     res.status(201).json({ message: 'Assignment created successfully' });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
-
-
 });
 
 // Get Assignments
@@ -100,8 +98,8 @@ router.post('/get-assignments', async (req, res) => {
     }
   });
   
-  // Get Today's Logs
-  router.post('/get-todays-logs', async (req, res) => {
+// Get Today's Logs
+router.post('/get-todays-logs', async (req, res) => {
     const { userId } = req.body;
     try {
       const todayLogs = await WorkoutController.getTodaysLogs(userId);
@@ -112,8 +110,8 @@ router.post('/get-assignments', async (req, res) => {
     }
   });
   
-  // Unassign Workout
-  router.post('/unassign-workout', async (req, res) => {
+// Unassign Workout
+router.post('/unassign-workout', async (req, res) => {
     const { workoutId, userId, dayOfWeek } = req.body;
     try {
       await WorkoutController.unassignWorkout(workoutId, userId, dayOfWeek);
@@ -123,8 +121,7 @@ router.post('/get-assignments', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
-  
-  // Log Session
+
   router.post('/log-session', async (req, res) => {
     const { userId, workoutId, sessionDate, dayOfWeek } = req.body;
     try {
@@ -135,5 +132,5 @@ router.post('/get-assignments', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
-  
-  module.exports = router;
+
+module.exports = router;

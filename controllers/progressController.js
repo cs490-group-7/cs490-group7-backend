@@ -95,10 +95,10 @@ const progressController = {
       }
 
       // Get the logs for the user
-      const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps)*W.set_count AS listed, SUM(SE.reps) AS completed ' +
-        'FROM SessionExercise as SE, WorkoutSession as WS, Workout_Exercise as WE, Workout AS W ' +
-        'WHERE WS.workout_id=W.workout_id AND SE.workout_id=WE.workout_id AND SE.exercise_order=WE.exercise_order AND WS.session_id=SE.session_id AND WS.user_id=? ' +
-        'GROUP BY SE.session_id;';
+      const logQuery = 'SELECT WS.session_id, WS.session_date, SUM(WE.reps*WE.set_count) AS listed, SUM(SE.reps*SE.set_count) AS completed ' +
+      'FROM SessionExercise as SE, WorkoutSession as WS, Workout_Exercise as WE ' +
+      'WHERE SE.workout_id=WE.workout_id AND SE.exercise_order=WE.exercise_order AND WS.session_id=SE.session_id AND WS.user_id=? ' +
+      'GROUP BY SE.session_id;';
 
       const sessions = await queryAsync(logQuery, [userId]);
       return sessions;
