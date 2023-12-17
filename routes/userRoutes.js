@@ -6,7 +6,6 @@ const UserController = require('../controllers/userController');
 const router = express.Router();
 
 // Registration Endpoint
-// Registration Endpoint
 router.post('/register', async (req, res) => {
   try {
     const result = await UserController.registerUser(req.body);

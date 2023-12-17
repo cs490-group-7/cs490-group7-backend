@@ -281,9 +281,9 @@ INSERT INTO ExerciseBank (exercise_name, exercise_type) VALUES
 
 CREATE TABLE Workout(
     workout_id int NOT NULL AUTO_INCREMENT,
-    creator_id int NOT NULL,
+    assignee_id int NOT NULL,
+    creator_id int,
     workout_name varchar(100) NOT NULL,
-    set_count int,
     description text,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -295,6 +295,7 @@ CREATE TABLE Workout_Exercise(
     workout_id int NOT NULL,
     exercise_id int NOT NULL,
     exercise_order int NOT NULL,
+    set_count int,
     reps int,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -306,14 +307,16 @@ CREATE TABLE Workout_Exercise(
 
 CREATE TABLE WorkoutCalendar(
     workout_id int NOT NULL,
-    user_id int NOT NULL,
+    assignee_id int NOT NULL,
+    creator_id int,
     day_of_week int NOT NULL,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (workout_id, user_id, day_of_week),
+    PRIMARY KEY (workout_id, assignee_id, day_of_week),
     FOREIGN KEY (workout_id) REFERENCES Workout (workout_id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (assignee_id) REFERENCES Users (id) ON DELETE CASCADE,
+    FOREIGN KEY (creator_id) REFERENCES Users (id) ON DELETE CASCADE,
     CONSTRAINT check_day_of_week CHECK (day_of_week >= 0 AND day_of_week <= 6)
 );
 
@@ -335,6 +338,7 @@ CREATE TABLE SessionExercise(
     workout_id int NOT NULL,
     exercise_id int NOT NULL,
     exercise_order int NOT NULL,
+    set_count int,
     reps int,
 
     last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -453,4 +457,10 @@ CREATE TABLE CoachRemoval (
     PRIMARY KEY (removal_id),
     FOREIGN KEY (client_id) REFERENCES Users (id) ON DELETE CASCADE,
     FOREIGN KEY (coach_id) REFERENCES Users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE AccountDeletionReasons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reason TEXT NOT NULL,
+    deletion_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
