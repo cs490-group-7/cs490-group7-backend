@@ -56,7 +56,21 @@ router.post('/current-weight', async (req, res) => {
 
 router.post('/update-goal-info', (req, res) => {
     const inputData = req.body;
+    
+    if (inputData.weightGoal !== "Maintain" && inputData.weightGoalValue == inputData.currentWeight){
+        return res.status(400).json({ message: "Please use the \"Maintain\" weight goal if you want to keep the same weight" });
+    }
+    else if (inputData.weightGoal === "Lose" && inputData.weightGoalValue > inputData.currentWeight){
+        return res.status(400).json({ message: "Lose weight goal cannot be larger than current weight" });
+    }
+    else if (inputData.weightGoal === "Gain" && inputData.weightGoalValue < inputData.currentWeight){
+        return res.status(400).json({ message: "Gain weight goal cannot be smaller than current weight" });
+    }
+
     if (inputData.createNew === true){
+        if (inputData.weightGoal === "Maintain" && inputData.weightGoalValue !== inputData.currentWeight){
+            return res.status(400).json({ message: "Maintain weight goal must be equal to current weight" });
+        }
         const values = [
             inputData.currentWeight,
             inputData.weightGoal,
