@@ -227,7 +227,7 @@ assignWorkout: async (assigneeId, creatorId, workoutId, dayOfWeek) => {
 
 getAssignments: async (userId) => {
   try {
-    const assignmentQuery = 'SELECT W.workout_id, W.workout_name, WC.day_of_week FROM WorkoutCalendar AS WC, Workout AS W WHERE WC.workout_id=W.workout_id AND WC.assignee_id=? ORDER BY W.workout_name ASC';
+    const assignmentQuery = 'SELECT W.workout_id, W.workout_name, WC.day_of_week, WC.creator_id=WC.assignee_id AS yours FROM WorkoutCalendar AS WC, Workout AS W WHERE WC.workout_id=W.workout_id AND WC.assignee_id=? ORDER BY W.workout_name ASC';
 
     const results = await new Promise((resolve, reject) => {
       db_conn.query(assignmentQuery, [userId], (error, results, fields) => {
