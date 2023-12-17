@@ -52,8 +52,21 @@ const surveyController = {
 
   addDailySurvey: async (surveyData) => {
     try {
+      // Check if a survey was already submitted today
       const currentDate = new Date().toISOString().split('T')[0]; // Get the current date in 'YYYY-MM-DD' format
-    
+      const checkQuery = 'SELECT * FROM DailySurvey WHERE user_id = ? AND date = ?';
+      const checkValues = [surveyData.user_id, currentDate];
+
+      const results = await new Promise((resolve, reject) => {
+      db_conn.query(checkQuery, checkValues, (error, results, fields) => {
+        if (results.length > 0) {
+        reject(new Error("You've already submitted a survey today"));
+      }
+      if (error) reject(error);
+      else resolve(results);
+    });
+    });
+
       const query = 'INSERT INTO DailySurvey (user_id, date, calorie_intake, water_intake, weight, mood) VALUES (?, ?, ?, ?, ?, ?)';
       const values = [
         surveyData.user_id,
