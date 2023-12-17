@@ -35,7 +35,7 @@ const coachController = {
         INNER JOIN CoachInitialSurvey ON Coach_Request.coach_id = CoachInitialSurvey.user_id
         WHERE Coach_Request.client_id = ?;`;
       const results = await queryAsync(query, [clientId]);
-      return results[0] || null;
+      return results[0];
     } catch (error) {
       console.error('Error retrieving current coach:', error);
       throw new Error('Error retrieving current coach');

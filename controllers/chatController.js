@@ -47,7 +47,7 @@ const chatController = {
       const chatIdResults = await queryAsync(getChatIdQuery, [coach_id, client_id]);
 
       if (chatIdResults.length === 0) {
-        throw new Error('No chat found between the specified coach and client.');
+        return [];
       }
 
       const chat_id = chatIdResults[0].chat_id;
