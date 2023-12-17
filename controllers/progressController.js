@@ -65,19 +65,39 @@ const progressController = {
 
   updateGoalInfo: async (inputData) => {
     try {
-      const values = [
-        inputData.weightGoal,
-        inputData.weightGoalValue,
-        inputData.userId,
-      ];
-      const query = 'UPDATE ClientInitialSurvey SET weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;';
-      await new Promise((resolve, reject) => {
-        db_conn.query(query, values, (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        });
-      });
-      return { message: 'Goal updated successfully' };
+      if (inputData.weightGoal !== "Maintain" && inputData.weightGoalValue == inputData.currentWeight) {
+        throw new Error("Please use the \"Maintain\" weight goal if you want to keep the same weight");
+      } else if (inputData.weightGoal === "Lose" && inputData.weightGoalValue > inputData.currentWeight) {
+        throw new Error("Lose weight goal cannot be larger than current weight");
+      } else if (inputData.weightGoal === "Gain" && inputData.weightGoalValue < inputData.currentWeight) {
+        throw new Error("Gain weight goal cannot be smaller than current weight");
+      }
+
+      if (inputData.createNew === true) {
+        if (inputData.weightGoal === "Maintain" && inputData.weightGoalValue !== inputData.currentWeight) {
+          throw new Error("Maintain weight goal must be equal to current weight");
+        }
+
+        const values = [
+          inputData.currentWeight,
+          inputData.weightGoal,
+          inputData.weightGoalValue,
+          inputData.userId
+        ];
+
+        const query = 'UPDATE ClientInitialSurvey SET weight = ?, weightGoal = ?, weightGoalValue = ? WHERE user_id = ?;';
+        await queryAsync(query, values);
+        return { message: 'New goal created successfully' };
+      } else {
+        const values = [
+          inputData.weightGoalValue,
+          inputData.userId
+        ];
+
+        const query = 'UPDATE ClientInitialSurvey SET weightGoalValue = ? WHERE user_id = ?;';
+        await queryAsync(query, values);
+        return { message: 'Goal updated successfully' };
+      }
     } catch (error) {
       console.error('Error updating goal info:', error);
       throw new Error('Error updating goal info');
