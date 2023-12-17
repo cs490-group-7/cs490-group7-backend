@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
 const dataRoutes = require('./routes/dataRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const accountSettings = require('./routes/accountSettings')
@@ -27,6 +28,7 @@ app.get('/health/check', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/surveys', surveyRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/workout', workoutRoutes);
 app.use('/api/progress', progressRoutes)
 app.use('/api/account', accountSettings)
